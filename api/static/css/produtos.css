@@ -1,0 +1,157 @@
+/* Estilo da página */
+/* Define as fontes padrão */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Define um fundo escuro e uma cor de fonte branca para melhorar a legibilidade */
+body {
+    background-color: #000000;
+    color: #FFFFFF;
+}
+
+/* Define a largura máxima do formulário para centralizar horizontalmente na página */
+form {
+    width: 90%;
+    margin: 0 auto;
+    background-color: #97AFC2;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form img {
+    width: 200px;
+}
+
+form button {
+    background-color: whitesmoke;
+    border-radius: 8px;
+    color: black;
+}
+
+.imagem-form {
+    display: flex;
+    flex-direction: column;
+    border-width: 5px;
+    border-style: ridge;
+    padding: 87px;
+    border-color: teal;
+    background-color: coral;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+table {
+    border-style: inset;
+    border-bottom-right-radius: 70px;
+    border-bottom-left-radius: 70px;
+    border-width: 26px;
+    text-align: center;
+    margin: 30px auto;
+    color: black;
+}
+
+.identificacao-form {
+    display: flex;
+}
+
+.label {
+    color: #FF7082;
+    font-size: 2.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.contexto{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+}
+/* Estilos para o seletor de estrelas */
+.radio-btn-grupo-classificador {
+    background-color: green;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.rating input {
+    display: none;
+}
+.rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.rating label {
+    font-size: 30px;
+    color: #ddd;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.rating label:hover,
+.rating label:hover~label {
+    color: #FFD700;
+}
+
+.rating input:checked+label {
+    color: #FFD700;
+}
+
+/* Adiciona algum espaço vertical entre os campos do formulário */
+input[type="text"],
+textarea {
+    width: 55%;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 20px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+button[type="submit"] {
+    background-color: #FF7082;
+    color: #FFFFFF;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #000000;
+}
+
+/* Adiciona alguma formatação básica para o cabeçalho da página */
+h1 {
+    font-size: 3em;
+    text-align: center;
+    color: #FFFFFF;
+    background-color: #63618A;
+    padding: 20px;
+    margin-top: 50px;
+}
+
+/* Botão */
+button {
+    background-color: #97AFC2;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Links */
+a {
+    color: #FF7082;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

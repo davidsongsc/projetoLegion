@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ titulo }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+
+<body>
+    <header>
+        <h1>{{ titulo }}</h1>
+        <h2>{{ texto }}</h2>
+        <nav class="menu fixed">
+            <img src='https://dagesico.pythonanywhere.com/static/img/demas/logoteste.svg' alt='' />
+            <button>
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="menu-items ">
+               
+
+                <li><a href='https://dagesico.pythonanywhere.com'>Inicio</a></li>
+                <li><a href="/loginadm">login</a></li>
+
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <article>
+                <h1>Acesso Restrito.</h1>
+            </article>
+        </section>
+    </main>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,238 @@
+/* Definindo as fontes */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Manrope:wght@200;300;400;500;600;700;800display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
+/* Definindo as variáveis das cores */
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --gray-100: #f8f8f8;
+  --gray-200: #e0e0e0;
+  --gray-300: #b0b0b0;
+  --gray-400: #666666;
+  --gray-500: #333333;
+  --blue: #0097e6;
+  --green: #00b894;
+  --red: #ff6b6b;
+  --yellow: #fbc531;
+  --stroke-width: 0;
+  --fill-opacity: 1;
+  --stroke: #7ced15;
+  --stroke-opacity: 1;
+  --fill: #ed1515;
+  --font-text: 'Montserrat', sans-serif;
+  width: auto;
+}
+
+/* Reset de estilos */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Estilo do body */
+body {
+  font-family: var(--font-text);
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: var(--gray-100);
+  color: var(--gray-500);
+
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100px; */
+  background-color: rgb(33, 33, 33);
+  flex-direction: column;
+  background-image: url("http://192.168.0.50:5000/static/img/demas/img_header.jpg");
+  background-size: cover;
+  background-position-y: -160px;
+  height: 30vh;
+  transition-delay: 1s;
+}
+
+header svg {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  fill: var(--fill);
+  fill-opacity: var(--fill-opacity);
+  stroke: var(--stroke);
+  stroke-opacity: var(--stroke-opacity);
+  stroke-width: var(--stroke-width);
+  position: relative;
+
+  width: 151px;
+
+
+}
+
+header h1 {
+  font-size: 6rem;
+  color: var(--white);
+  text-transform: capitalize;
+  font-family: 'Manrope', sans-serif;
+  text-shadow: 1px 1px 11px black;
+}
+
+header h2 {
+  color: var(--gray-300);
+  font-size: 1rem;
+  font-weight: 100;
+  letter-spacing: 5px;
+  text-transform: capitalize;
+  font-family: 'Manrope', sans-serif;
+  text-shadow: 1px 1px 5px white;
+}
+
+/* Estilo do nav */
+nav {
+  display: flex;
+  justify-content: space-evenly;
+  height: 50px;
+  background-color: var(--gray-400);
+  position: relative;
+  transition: all 1.2s ease-in-out;
+  align-items: center;
+
+}
+
+nav img{
+  width: 50px;
+}
+nav.fixed {
+  position: fixed;
+  height: 7vh;
+  /* Define a posição como fixa */
+  top: 0;
+  /* Fixa o elemento no topo da página */
+  background-color: rgb(27, 26, 26);
+  /* Define uma cor de fundo opcional para o elemento fixo */
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+  /* Adiciona uma sombra opcional para destacar o elemento fixo */
+  width: 100%;
+  /* Define a largura como 100% para ocupar todo o espaço horizontal disponível */
+  z-index: 9999;
+  /* Define uma ordem de empilhamento alta para que o elemento fique sempre acima dos outros elementos */
+}
+
+.logo {
+  display: block;
+  /* Esconde o logotipo por padrão */
+  opacity: 0;
+  width: 50px;
+  transition: all 1.2s ease-in-out;
+}
+
+nav.fixed .logo {
+  opacity: 1;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+}
+
+/*
+nav li {
+  margin: 0 10px;
+}
+*/
+nav a {
+  color: var(--white);
+  text-decoration: none;
+  text-shadow: 1px 1px 1px black;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+}
+
+nav a:hover {
+  color: var(--blue);
+}
+
+/* estilo padrão do menu */
+.menu-icon {
+  display: inline-block;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  padding: 5px;
+  width: auto;
+  position: absolute;
+  /* margin-right: -111px; */
+  left: 80px;
+  background-color: var(--gray-300);
+  z-index: 999;
+}
+
+.menu-icon span {
+  display: block;
+  width: 33px;
+  height: 4px;
+  margin-bottom: 5px;
+  position: relative;
+  background-color: #333;
+  border-radius: 3px;
+  z-index: 1;
+}
+
+.menu-icon span:last-child {
+  margin-bottom: 0;
+}
+
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: -webkit-fill-available;
+  justify-content: flex-start;
+  list-style: none;
+  margin: 49px auto auto auto;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(-100%);
+  z-index: 99;
+}
+
+.menu-items-aberto {
+  transform: translateX(0);
+  background-color: var(--gray-400);
+  padding: 4px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  transition: .5s;
+}
+
+.menu-items-fechado {
+  transition: .5s;
+}
+
+.menu-items li {
+  margin-bottom: 10px;
+}
+
+@media screen and (min-width: 960px) {
+
+  .menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .menu-icon {
+    display: none;
+  }
+
+  .menu-items {
+    flex-direction: row;
+    transform: none;
+    margin: 0 0 0 auto;
+    padding: 0;
+  }
+
+  .menu-items li {
+    margin-left: 20px;
+    margin-bottom: 0;
+  }
+}
