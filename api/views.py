@@ -6,11 +6,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Produtos, Grupos
+from .models import Produtos, Grupos, AuthUser, Comanda, Itens
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import AccessToken
-
+import json
+from .kripto import criptografaTexto as ctext
 # Tokens para autenticação de requisições
 import secrets
 
@@ -48,6 +49,76 @@ def listar_produtos(request):
     return JsonResponse(data)
 
 
+def listar_comandas(request):
+
+    print(TOKEN)
+    nome = request.GET.get('nome', '')
+    token = request.GET.get('token', '')
+    
+    if not token or token != TOKEN:
+        # Se o token não for fornecido ou não for válido, retornar erro 401
+        return HttpResponse("Token inválido.", status=401)
+
+    if not nome:
+        # Se o nome não for fornecido, retornar erro 400
+        return HttpResponse("O parâmetro 'nome' é obrigatório.", status=400)
+
+    if len(nome) < 3:
+        # Se o nome tiver menos de 3 caracteres, retornar erro 400
+        return HttpResponse("O nome deve ter pelo menos 3 caracteres.", status=400)
+
+    if not nome.isalnum():
+        # Se o nome contiver caracteres não alfanuméricos, retornar erro 400
+        return HttpResponse("O nome não pode conter caracteres especiais.", status=400)
+
+    # Se o nome for válido e o token for válido, prosseguir com a lógica do endpoint
+    comandas = Comanda.objects.all()
+    comandas = list(comandas.values())
+       
+    for comanda in comandas:
+        
+        itens = Itens.objects.filter(itens=comanda['itens'])
+        
+        comanda["itens"] = [list(itens.values())]
+        print(comanda)
+    #ite = Itens.objects.filter(itens=1)
+    #itens = {"itens": list(ite.values())}
+    
+    jsondata = json.dumps(comandas)
+    return HttpResponse(jsondata, content_type='application/json')
+
+def itens_omanda(request):
+
+    print(TOKEN)
+    nome = request.GET.get('nome', '')
+    token = request.GET.get('token', '')
+    numero = request.GET.get('numero', '')
+
+    if not token or token != TOKEN:
+        # Se o token não for fornecido ou não for válido, retornar erro 401
+        return HttpResponse("Token inválido.", status=401)
+
+    if not nome:
+        # Se o nome não for fornecido, retornar erro 400
+        return HttpResponse("O parâmetro 'nome' é obrigatório.", status=400)
+
+    if len(nome) < 3:
+        # Se o nome tiver menos de 3 caracteres, retornar erro 400
+        return HttpResponse("O nome deve ter pelo menos 3 caracteres.", status=400)
+
+    if not nome.isalnum():
+        # Se o nome contiver caracteres não alfanuméricos, retornar erro 400
+        return HttpResponse("O nome não pode conter caracteres especiais.", status=400)
+
+    # Se o nome for válido e o token for válido, prosseguir com a lógica do endpoint
+    itens = Produtos.objects.filter(id=numero)
+    ite = list(itens.values())[0]
+    #ite = Itens.objects.filter(itens=1)
+    #itens = {"itens": list(ite.values())}
+    
+    jsondata = json.dumps(ite)
+    return HttpResponse(jsondata, content_type='application/json')
+
 def listar_grupos(request):
     print(TOKEN)
     nome = request.GET.get('nome', '')
@@ -76,10 +147,32 @@ def listar_grupos(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def user_view(request):
-    user = request.user
-    return Response({'nome': user.first_name, 'colaborador': user.is_staff, 'email': user.email})
+    print(TOKEN)
+    print(ctext(TOKEN))
+    nome = request.GET.get('nome', '')
+    token = request.GET.get('token', '')
+    if not token or token != TOKEN:
+        # Se o token não for fornecido ou não for válido, retornar erro 401
+        return HttpResponse("Token inválido.", status=401)
+
+    if not nome:
+        # Se o nome não for fornecido, retornar erro 400
+        return HttpResponse("O parâmetro 'nome' é obrigatório.", status=400)
+
+    if len(nome) < 3:
+        # Se o nome tiver menos de 3 caracteres, retornar erro 400
+        return HttpResponse("O nome deve ter pelo menos 3 caracteres.", status=400)
+
+    if not nome.isalnum():
+        # Se o nome contiver caracteres não alfanuméricos, retornar erro 400
+        return HttpResponse("O nome não pode conter caracteres especiais.", status=400)
+
+    # Se o nome for válido e o token for válido, prosseguir com a lógica do endpoint
+    usuario = AuthUser.objects.filter(username=nome)
+    data = list(usuario.values())
+    print(data[0]['first_name'])
+    return Response({'nome': data[0]['first_name'], 'sobrenome': data[0]['last_name'], 'colaborador': data[0]['is_staff'], 'email': data[0]['email']})
 
 # Login Administrativo API
 

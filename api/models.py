@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Produtos(models.Model):
     nomeproduto = models.TextField()
     nomefantasia = models.TextField()
@@ -18,6 +19,46 @@ class Produtos(models.Model):
         db_table = 'produtos'
 
 
+class Comanda(models.Model):
+    chave = models.IntegerField(blank=True, null=True)
+    mesa = models.IntegerField(blank=True, null=True)
+    status = models.IntegerField(blank=True, null=True)
+    datahora = models.TextField(blank=True, null=True)
+    itens = models.IntegerField(blank=True, null=True)
+    pagamento = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Comanda'
+
+
+class Itens(models.Model):
+    itens = models.IntegerField(blank=True, null=True)
+    produto = models.ForeignKey(
+        'Produtos', models.DO_NOTHING, db_column='produto', blank=True, null=True)
+    # This field type is a guess.
+    gorjeta = models.TextField(blank=True, null=True)
+    # This field type is a guess.
+    desconto = models.TextField(blank=True, null=True)
+    tipoproduto = models.IntegerField(blank=True, null=True)
+    avaliacao = models.IntegerField(blank=True, null=True)
+    datahora = models.TextField(blank=True, null=True)
+    combinac = models.IntegerField(blank=True, null=True)
+    combinag = models.IntegerField(blank=True, null=True)
+    descricao = models.IntegerField(blank=True, null=True)
+    disponibilidade = models.IntegerField(blank=True, null=True)
+    grupo = models.IntegerField(blank=True, null=True)
+    grupoc = models.IntegerField(blank=True, null=True)
+    qtd = models.IntegerField(blank=True, null=True)
+    # This field type is a guess.
+    valor = models.TextField(blank=True, null=True)
+    nomefantasia = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Itens'
+
+
 class Grupos(models.Model):
     nome = models.TextField(blank=True, null=True)
     grupo_chave = models.IntegerField(blank=True, null=True)
@@ -34,3 +75,21 @@ class Grupos(models.Model):
     class Meta:
         managed = False
         db_table = 'grupos'
+
+
+class AuthUser(models.Model):
+    password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(blank=True, null=True)
+    is_superuser = models.BooleanField()
+    username = models.CharField(unique=True, max_length=150)
+    last_name = models.CharField(max_length=150)
+    email = models.CharField(max_length=254)
+    is_staff = models.BooleanField()
+    is_active = models.BooleanField()
+    date_joined = models.DateTimeField()
+    first_name = models.CharField(max_length=150)
+    token = models.CharField(max_length=16)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user'

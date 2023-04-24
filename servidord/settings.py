@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-g^7ekpv-u6_jv$m%qewhl-8mk!gv9p9n-ow#@h=!3c###-_h(+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['dagesico.pythonanywhere.com']
+ALLOWED_HOSTS = ['192.168.0.50']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'socketio',
     'corsheaders',
     'rest_framework',
     'api',
@@ -59,12 +60,10 @@ REST_FRAMEWORK = {
 }
 
 
-CORS_ORIGIN_ALLOW_ALL = False
-
-CORS_ORIGIN_WHITELIST = [
-    'https://main--marvelous-gaufre-f1183b.netlify.app',  # Aqui deve ser o endereço do seu frontend
-]
-
+# Configuração do socket.io
+SOCKETIO_URL = '/socket.io/'
+SOCKETIO_ENGINE = 'django_socketio.asyncio.server'
+SOCKETIO_CLIENTS = []
 CORS_ALLOW_METHODS = [
     'GET',
 
@@ -72,7 +71,6 @@ CORS_ALLOW_METHODS = [
 
 MIDDLEWARE = [
 
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -83,7 +81,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 ]
-
+ASGI_APPLICATION = 'servidor.routing.application'
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',
+    'http://192.168.0.50:3000'
+)
 ROOT_URLCONF = 'servidord.urls'
 CORS_ALLOW_CREDENTIALS = True
 
