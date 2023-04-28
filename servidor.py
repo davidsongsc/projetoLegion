@@ -18,7 +18,7 @@ def dados_usuario(sid, data):
     colaborador = cursor.fetchone()
 
     if colaborador:
-        sio.emit('autenticacao', {'success': True, 'nivel': colaborador[1], 'usuario': colaborador[5], 'auth': colaborador[3], }, room=sid)
+        sio.emit('autenticacao', {'success': True, 'nivel': colaborador[2], 'usuario': colaborador[5], 'auth': colaborador[3], }, room=sid)
     else:
         sio.emit('autenticacao', {'success': False}, room=sid)
 
