@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'socketio',
+    'channels',
     'corsheaders',
     'rest_framework',
     'api',
@@ -58,7 +58,9 @@ REST_FRAMEWORK = {
     ),
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
-
+CORS_ALLOWED_ORIGINS = [
+    'http://192.168.0.50:3000',  # ou outra origem que você esteja usando
+]
 
 # Configuração do socket.io
 SOCKETIO_URL = '/socket.io/'
@@ -81,13 +83,19 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 ]
+
+
 ASGI_APPLICATION = 'servidor.routing.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "ROUTING": "servidor.routing.websocket_urlpatterns",
+    },
+}
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-    'http://192.168.0.50:3000'
-)
+CORS_ORIGIN_WHITELIST = ['http://192.168.0.50:3000']
+
 ROOT_URLCONF = 'servidord.urls'
 CORS_ALLOW_CREDENTIALS = True
 

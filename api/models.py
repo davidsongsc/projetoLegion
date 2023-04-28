@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth import get_user_model
 
 class Produtos(models.Model):
     nomeproduto = models.TextField()
@@ -26,10 +26,32 @@ class Comanda(models.Model):
     datahora = models.TextField(blank=True, null=True)
     itens = models.IntegerField(blank=True, null=True)
     pagamento = models.IntegerField(blank=True, null=True)
+    operador = models.TextField(blank=True, null=True)  # This field type is a guess.
 
     class Meta:
         managed = False
         db_table = 'Comanda'
+
+class Inventario(models.Model):
+    id = models.IntegerField(primary_key=True, blank=False, null=False)
+    produto_id = models.IntegerField(blank=True, null=True)
+    listaid = models.IntegerField(blank=True, null=True)
+    push = models.IntegerField(blank=True, null=True)
+    nomeproduto = models.TextField()
+    nomefantasia = models.TextField()
+    valor = models.TextField()  # This field type is a guess.
+    descricao = models.TextField()
+    avaliacao = models.IntegerField()
+    disponibilidade = models.IntegerField()
+    qtd = models.IntegerField()
+    grupo = models.IntegerField()
+    grupoc = models.IntegerField(blank=True, null=True)
+    combinag = models.IntegerField(blank=True, null=True)
+    combinac = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Inventario'
 
 
 class Itens(models.Model):
@@ -71,6 +93,7 @@ class Grupos(models.Model):
     grupocombo = models.IntegerField(blank=True, null=True)
     cmd = models.TextField(blank=True, null=True)
     cmdl = models.TextField(blank=True, null=True)
+    grupoc = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -93,3 +116,13 @@ class AuthUser(models.Model):
     class Meta:
         managed = False
         db_table = 'auth_user'
+
+class Colaborador(models.Model):
+    usuario = models.ForeignKey(get_user_model(), models.DO_NOTHING, db_column='usuario', blank=True, null=True)
+    nivel = models.IntegerField(blank=True, null=True)
+    auth = models.TextField(blank=True, null=True)
+    senha = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Colaborador'

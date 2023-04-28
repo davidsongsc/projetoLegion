@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Produtos, Grupos, AuthUser, Comanda, Itens
+from .models import Produtos, Grupos, AuthUser, Comanda, Itens, Inventario, Colaborador
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import AccessToken
@@ -14,6 +14,76 @@ import json
 from .kripto import criptografaTexto as ctext
 # Tokens para autenticação de requisições
 import secrets
+from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods
+from socketio import AsyncServer
+from django.shortcuts import render
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.http import HttpResponse
+
+
+@csrf_exempt
+def websocket(request):
+    # Recupera o objeto do canal para usar para enviar mensagens
+    channel_layer = get_channel_layer()
+    # Aceita a conexão WebSocket
+    ws = request.websocket
+    # Adiciona o canal ao grupo 'mesas'
+    async_to_sync(channel_layer.group_add)('mesas', ws.channel_name)
+    try:
+        # Loop infinito para lidar com as mensagens recebidas
+        while True:
+            message = ws.receive()
+            if message is not None:
+                # Envia a mensagem para todos os clientes no grupo 'mesas'
+                async_to_sync(channel_layer.group_send)(
+                    'mesas', {'type': 'send_message', 'text': message})
+    finally:
+        # Remove o canal do grupo 'mesas' quando a conexão é fechada
+        async_to_sync(channel_layer.group_discard)('mesas', ws.channel_name)
+
+
+def ws_connect(request, room_name):
+    # Obtém a camada de canal (channel layer)
+    channel_layer = get_channel_layer()
+    # Cria um grupo com o nome da sala (room)
+    async_to_sync(channel_layer.group_add)(
+        room_name,
+        request.channel_name
+    )
+    # Aceita a conexão WebSocket
+    request.websocket.accept()
+    # Loop infinito que escuta mensagens do WebSocket
+    while True:
+        message = request.websocket.receive()
+        if message is None:
+            # A conexão foi fechada
+            async_to_sync(channel_layer.group_discard)(
+                room_name,
+                request.channel_name
+            )
+            break
+        # Envia a mensagem recebida para o grupo da sala (room)
+        async_to_sync(channel_layer.group_send)(
+            room_name,
+            {
+                "type": "chat.message",
+                "message": message.decode('utf-8')
+            }
+        )
+
+
+def ws_message(message):
+    # Envia a mensagem recebida para o cliente
+    message.reply_channel.send({
+        'text': message.content['message']
+    })
+
+
+def ws_disconnect(message):
+    pass
+
 
 TOKEN = secrets.token_hex(16)
 
@@ -49,12 +119,76 @@ def listar_produtos(request):
     return JsonResponse(data)
 
 
+@csrf_exempt
+def criar_colaborador(request):
+    if request.method == 'POST':
+        # Recupera os dados do POST
+        usuario_id = request.POST.get('usuario_id')
+        nivel = request.POST.get('nivel')
+        auth = request.POST.get('auth')
+        senha = request.POST.get('senha')
+
+        # Cria um novo colaborador com os dados do POST
+        colaborador = Colaborador(
+            usuario_id=usuario_id, nivel=nivel, auth=auth, senha=senha)
+        colaborador.save()
+
+        # Cria um dicionário com os dados do colaborador criado
+        data = {"colaborador": {
+            "id": colaborador.id,
+            "usuario_id": colaborador.usuario_id,
+            "nivel": colaborador.nivel,
+            "auth": colaborador.auth,
+            "senha": colaborador.senha
+        }}
+
+        # Retorna uma resposta JSON com os dados do colaborador criado
+        return JsonResponse(data)
+    else:
+        # Se o método HTTP não for POST, retorna um erro 405 (Método não permitido)
+        return HttpResponse("Método não permitido.", status=405)
+
+
+def listar_inventario(request):
+    print(TOKEN)
+    nome = request.GET.get('nome', '')
+    token = request.GET.get('token', '')
+
+    if not token or token != TOKEN:
+        # Se o token não for fornecido ou não for válido, retornar erro 401
+        return HttpResponse("Token inválido.", status=401)
+
+    if not nome:
+        # Se o nome não for fornecido, retornar erro 400
+        return HttpResponse("O parâmetro 'nome' é obrigatório.", status=400)
+
+    if len(nome) < 3:
+        # Se o nome tiver menos de 3 caracteres, retornar erro 400
+        return HttpResponse("O nome deve ter pelo menos 3 caracteres.", status=400)
+
+    if not nome.isalnum():
+        # Se o nome contiver caracteres não alfanuméricos, retornar erro 400
+        return HttpResponse("O nome não pode conter caracteres especiais.", status=400)
+
+    # Se o nome for válido e o token for válido, prosseguir com a lógica do endpoint
+    inventario = Inventario.objects.all()
+    data = {"inventario": list(inventario.values())}
+    return JsonResponse(data)
+
+
+def listar_colaboradores(request):
+
+    colaboradores = Colaborador.objects.all()
+    data = {"colaboradores": list(colaboradores.values())}
+    return JsonResponse(data)
+
+
 def listar_comandas(request):
 
     print(TOKEN)
     nome = request.GET.get('nome', '')
     token = request.GET.get('token', '')
-    
+
     if not token or token != TOKEN:
         # Se o token não for fornecido ou não for válido, retornar erro 401
         return HttpResponse("Token inválido.", status=401)
@@ -74,18 +208,19 @@ def listar_comandas(request):
     # Se o nome for válido e o token for válido, prosseguir com a lógica do endpoint
     comandas = Comanda.objects.all()
     comandas = list(comandas.values())
-       
+
     for comanda in comandas:
-        
+
         itens = Itens.objects.filter(itens=comanda['itens'])
-        
+
         comanda["itens"] = [list(itens.values())]
-        print(comanda)
-    #ite = Itens.objects.filter(itens=1)
-    #itens = {"itens": list(ite.values())}
-    
+
+    # ite = Itens.objects.filter(itens=1)
+    # itens = {"itens": list(ite.values())}
+
     jsondata = json.dumps(comandas)
     return HttpResponse(jsondata, content_type='application/json')
+
 
 def itens_omanda(request):
 
@@ -113,11 +248,12 @@ def itens_omanda(request):
     # Se o nome for válido e o token for válido, prosseguir com a lógica do endpoint
     itens = Produtos.objects.filter(id=numero)
     ite = list(itens.values())[0]
-    #ite = Itens.objects.filter(itens=1)
-    #itens = {"itens": list(ite.values())}
-    
+    # ite = Itens.objects.filter(itens=1)
+    # itens = {"itens": list(ite.values())}
+
     jsondata = json.dumps(ite)
     return HttpResponse(jsondata, content_type='application/json')
+
 
 def listar_grupos(request):
     print(TOKEN)
@@ -171,7 +307,7 @@ def user_view(request):
     # Se o nome for válido e o token for válido, prosseguir com a lógica do endpoint
     usuario = AuthUser.objects.filter(username=nome)
     data = list(usuario.values())
-    print(data[0]['first_name'])
+
     return Response({'nome': data[0]['first_name'], 'sobrenome': data[0]['last_name'], 'colaborador': data[0]['is_staff'], 'email': data[0]['email']})
 
 # Login Administrativo API

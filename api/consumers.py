@@ -1,46 +1,34 @@
 import asyncio
 import json
-from django_socketio import sockets
+from channels.generic.websocket import AsyncWebsocketConsumer
 
-class ChatConsumer(sockets.AsyncWebsocketConsumer):
+class MesaConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
-
-        # Entrar no grupo da sala
+        self.mesa_id = self.scope['url_route']['kwargs']['mesa_id']
         await self.channel_layer.group_add(
-            self.room_group_name,
+            self.mesa_id,
             self.channel_name
         )
-
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Sair do grupo da sala
         await self.channel_layer.group_discard(
-            self.room_group_name,
+            self.mesa_id,
             self.channel_name
         )
 
-    # Receber mensagem do WebSocket
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-
-        # Enviar mensagem para o grupo da sala
+        data = json.loads(text_data)
         await self.channel_layer.group_send(
-            self.room_group_name,
+            self.mesa_id,
             {
-                'type': 'chat_message',
-                'message': message
+                'type': 'mesa_message',
+                'message': data['message']
             }
         )
 
-    # Receber mensagem do grupo da sala
-    async def chat_message(self, event):
+    async def mesa_message(self, event):
         message = event['message']
-
-        # Enviar mensagem para o WebSocket
         await self.send(text_data=json.dumps({
             'message': message
         }))

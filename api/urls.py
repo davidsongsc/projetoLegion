@@ -4,7 +4,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
 urlpatterns = [
-    path('socket.io/', csrf_exempt(RedirectView.as_view(url='http://192.168.0.50:8000/socket.io/', permanent=False))),
     path('', views.api, name='index'),
     path('home', views.api, name='index'),
     path('login', views.login_view, name='login'),
@@ -13,6 +12,7 @@ urlpatterns = [
     path('comandas', views.listar_comandas, name='index'),
     path('itens', views.itens_omanda, name='index'),
     path('produtos', views.listar_produtos, name='produtos'),
+    path('inventario', views.listar_inventario, name='inventario'),
     path('grupos', views.listar_grupos, name='index'),
     path('loginadm', views.loginadm, name='index'),
     path('cozinha', views.api, name='index'),
@@ -21,7 +21,7 @@ urlpatterns = [
     path('usuario', views.user_view, name='index'),
     path('getcookie', views.api, name='index'),
     path('contato', views.api, name='index'),
+    path('api', views.listar_colaboradores, name='listar_colaboradores'),
 
-   
     # URL navegação
-    ]
+]
