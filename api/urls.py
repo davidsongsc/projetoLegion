@@ -21,7 +21,7 @@ urlpatterns = [
     path('usuario', views.user_view, name='index'),
     path('getcookie', views.api, name='index'),
     path('contato', views.api, name='index'),
-    path('api', views.listar_colaboradores, name='listar_colaboradores'),
+ #   path('api', views.listar_colaboradores, name='listar_colaboradores'),
 
     # URL navegação
 ]

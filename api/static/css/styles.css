@@ -46,13 +46,9 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* height: 100px; */
   background-color: rgb(33, 33, 33);
   flex-direction: column;
-  background-image: url("http://192.168.0.50:5000/static/img/demas/img_header.jpg");
-  background-size: cover;
-  background-position-y: -160px;
-  height: 30vh;
+  height: 64vh;
   transition-delay: 1s;
 }
 
@@ -71,23 +67,88 @@ header svg {
 }
 
 header h1 {
-  font-size: 6rem;
+  font-size: 9rem;
   color: var(--white);
   text-transform: capitalize;
   font-family: 'Manrope', sans-serif;
-  text-shadow: 1px 1px 11px black;
+  text-shadow: -4px -3px 8px #cd6b0b, 6px 5px 8px #01e2f9;
+  /*animation: circular-shadow 4s linear infinite;*/
 }
+
+@keyframes circular-shadow {
+  0% {
+    text-shadow: -2px -2px 8px #cd6b0b, 2px 2px 8px #01e2f9;
+  }
+
+  25% {
+    text-shadow: -1px -1px 8px #cd6b0b, 2px 2px 8px #01e2f9;
+  }
+
+  50% {
+    text-shadow: 0px 0px 8px #cd6b0b, 0px 0px 8px #01e2f9;
+  }
+
+  75% {
+    text-shadow: -1px -1px 8px #cd6b0b, 2px 2px 8px #01e2f9;
+  }
+
+  100% {
+    text-shadow: -2px -2px 8px #cd6b0b, 2x 2px 8px #01e2f9;
+  }
+}
+
 
 header h2 {
   color: var(--gray-300);
-  font-size: 1rem;
+  font-size: 2rem;
   font-weight: 100;
   letter-spacing: 5px;
   text-transform: capitalize;
   font-family: 'Manrope', sans-serif;
   text-shadow: 1px 1px 5px white;
+  text-decoration: overline underline double;
 }
 
+section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 10px;
+}
+
+article {
+  width: 400px;
+  height: 230px;
+  text-align: center;
+  color: whitesmoke;
+  padding: 10px;
+  background: rgb(0, 0, 0);
+  border-radius: 7px;
+  box-shadow: 2px 2px 3px black,-1px -1px 6px black;
+}
+thead th{
+  width: 250px;
+}
+tbody tr .a-s-section-table-tr ,
+tbody tr .b-s-section-table-tr ,
+tbody tr .c-s-section-table-tr ,
+tbody tr .d-s-section-table-tr {
+  font-size: 30px;
+  font-weight: bold;
+}
+tbody tr .a-s-section-table-tr{
+  color: #31ca02;
+}
+tbody tr .b-s-section-table-tr{
+  color: #dd0000;
+}
+tbody tr .c-s-section-table-tr{
+  color: #72928a;
+}
+tbody tr .d-s-section-table-tr{
+  color: #dbba00;
+}
 /* Estilo do nav */
 nav {
   display: flex;

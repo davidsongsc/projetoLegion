@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Davidson George</title>
+    <style>
+        /* Reset CSS */
+
+        /* Remove a margem e o preenchimento padrão */
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        ul,
+        ol,
+        figure,
+        figcaption,
+        blockquote,
+        dl,
+        dd {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Define a altura e largura do elemento para 100% */
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Define o tamanho da fonte base para 16 pixels */
+        body {
+            font-size: 16px;
+        }
+
+        /* Remove a decoração de links */
+        a {
+            text-decoration: none;
+        }
+
+        /* Define a cor do texto para preto */
+        body {
+            color: #000;
+        }
+
+        /* Define a fonte sans-serif como fonte padrão */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        /* Define a exibição em bloco para elementos de cabeçalho */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            display: block;
+        }
+
+        /* Remove a lista de pontos para listas não ordenadas */
+        ul,
+        ol {
+            list-style: none;
+        }
+
+        /* Define a exibição em bloco para elementos de lista */
+        li {
+            display: block;
+        }
+
+        /* Remove a decoração de lista */
+        li:before {
+            content: none;
+        }
+
+        /* Remove o estilo padrão para elementos de formulário */
+        button,
+        input,
+        select,
+        textarea {
+            margin: 0;
+            padding: 0;
+            border: none;
+            background: none;
+            font-size: inherit;
+            font-family: inherit;
+            vertical-align: middle;
+            color: inherit;
+            outline: none;
+            appearance: none;
+        }
+
+        /* Define a exibição em bloco para elementos de imagem */
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        header {
+            background-color: rgb(250, 250, 250);
+            height: 10vh;
+            display: flex;
+            align-content: center;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+        section {
+            display: flex;
+            justify-content: center;
+        }
+
+        aside {
+            margin: 25px;
+            background: #ededed;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 1px 1px 1px;
+        }
+
+        .imagem-nome {
+            background: cadetblue;
+            padding: 30px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            background-image: url('https://pbs.twimg.com/profile_banners/94169196/1637350689/1500x500');
+            background-size: cover;
+        }
+
+        .perfil-cont {
+            width: 90%;
+            text-indent: 32px;
+            box-shadow: 1px 1px 1px black;
+            border-radius: 10px;
+            background: azure;
+            line-height: 50px;
+        }
+
+        .imagem-perfil-cont {
+            border-radius: 50%;
+        }
+
+        .nome-perfil-cont {
+            font-family: serif;
+            font-weight: 100;
+            font-size: 41px;
+            padding: 10px;
+        }
+
+        summary {
+            font-size: 25px;
+            font-family: sans-serif;
+            letter-spacing: 2px;
+        }
+        .obj-projetos{
+            height: 125px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="barra-cont">
+            <div>
+                <h1>portfólio</h1>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section>
+            <aside class="perfil-cont">
+
+                <div class="imagem-nome">
+                    <img src="https://media.licdn.com/dms/image/D4D03AQFfojEuxNm6jQ/profile-displayphoto-shrink_200_200/0/1669728522365?e=1689206400&v=beta&t=cX5lNgPD4Bkdz2cY9t4s4eusiUdKA3g038prnkoUyk8"
+                        alt="" class="imagem-perfil-cont">
+                    <h1 class="nome-perfil-cont">Davidson George S. Correa</h1>
+                </div>
+                <details open>
+                    <summary>Contato</summary>
+                    <div class="contato-cont">
+                        <p>E-mail: <a href="mailto:davidsongsc@gmail.com">davidsongsc@gmail.com</a></p>
+                        <p>Telefone: <a href="tel:+5521983108439">+55 21 98310-8439</a></p>
+                        <p>WhatsApp: <a href="https://wa.me/5521983108439">+55 21 98310-8439</a></p>
+                        <p>Linkedin: <a href="https://www.linkedin.com/in/davidsongsc/">in/Davidsongsc</a></p>
+                        <p>Twitter: <a href="https://twitter.com/Dagesico">Dagesico</a></p>
+
+                    </div>
+
+                </details>
+
+                <details open>
+                    <summary>Sobre</summary>
+                </details>
+                <p>Soluções inovadoras com Tecnologias da Informação.</p>
+            </aside>
+
+        </section>
+
+
+        <section style="display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: space-around;">
+            <aside class="obj-projetos">
+                <h2>projeto SiteDelivery</h2>
+                <p>React</p>
+                <a href="https://main--marvelous-gaufre-f1183b.netlify.app/">Pagina do Projeto</a>
+            </aside>
+            <aside>
+                <h2>projeto ComandaDelivery</h2>
+                <p>React</p>
+                <a href="https://main--marvelous-gaufre-f1183b.netlify.app/">Pagina do Projeto</a>
+            </aside>
+            <aside>
+                <h2>Projeto CozinhaDelivery</h2>
+                <p>React</p>
+                <a href="https://main--marvelous-gaufre-f1183b.netlify.app/">Pagina do Projeto</a>
+            </aside>
+            <aside>
+                <h2>Projeto ServidorDelivery</h2>
+                <p>Django - Socket.io</p>
+                <a href="https://dagesico.pythonanywhere.com/">Pagina do Projeto</a>
+
+            </aside>
+
+        </section>
+        <section style="display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: space-around;">
+            <aside>
+                <h2>Emprego atual</h2>
+                <p>Outback Steakhouse - Bartender - jan/2019 - atual</p>
+            </aside>
+            <aside>
+                <h2>---</h2>
+                <p>Espetto Carioca - Garçom - jan/2019 - atual</p>
+            </aside>
+            <aside>
+                <h2>---</h2>
+                <p>Demas & Divas - Garçom - jan/2019 - atual</p>
+            </aside>
+        </section>
+
+    </main>
+</body>
+
+</html>

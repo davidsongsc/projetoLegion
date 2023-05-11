@@ -8,17 +8,36 @@ app = socketio.WSGIApp(sio)
 conn = sqlite3.connect('demas.sqlite3')
 cursor = conn.cursor()
 
+
+@sio.on('dados_comanda')
+def dados_comanda(sid, data):
+    # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
+    # e fazer o que desejar com eles (por exemplo, autenticar o usuário)
+
+    # Exemplo de autenticação com dados de usuário armazenados no banco de dados:
+    cursor.execute("SELECT operador FROM Comanda WHERE mesa = ?", (data[0],))
+    operador = cursor.fetchone()
+
+    if operador:
+        sio.emit('autenticacao', {'success': True,
+                 'operador': operador[0], }, room=sid)
+    else:
+        sio.emit('autenticacao', {'success': False}, room=sid)
+
+
 @sio.on('dados_usuario')
 def dados_usuario(sid, data):
     # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
     # e fazer o que desejar com eles (por exemplo, autenticar o usuário)
 
     # Exemplo de autenticação com dados de usuário armazenados no banco de dados:
-    cursor.execute("SELECT Colaborador.*, auth_user.username FROM Colaborador JOIN auth_user ON Colaborador.usuario = auth_user.id WHERE Colaborador.senha = ?", (data['senha'],))
+    cursor.execute(
+        "SELECT Colaborador.*, auth_user.username FROM Colaborador JOIN auth_user ON Colaborador.usuario = auth_user.id WHERE Colaborador.senha = ?", (data['senha'],))
     colaborador = cursor.fetchone()
 
     if colaborador:
-        sio.emit('autenticacao', {'success': True, 'nivel': colaborador[2], 'usuario': colaborador[5], 'auth': colaborador[3], }, room=sid)
+        sio.emit('autenticacao', {
+                 'success': True, 'nivel': colaborador[2], 'usuario': colaborador[5], 'auth': colaborador[3], }, room=sid)
     else:
         sio.emit('autenticacao', {'success': False}, room=sid)
 
@@ -38,7 +57,24 @@ def get_comandas(sid):
             "chave": comanda[1],
             "datahora": comanda[4],
             "id": comanda[0],
-            "itens": [{"id": i[0], "nome": i[1], "preco": i[2]} for i in itens],
+            "itens": [
+                {
+                    "id": i[0],
+                       "itens": i[1],
+                       "produto_id": i[2],
+                       "gorjeta": i[3],
+                       "desconto": i[4],
+                       "tipoproduto": i[5],
+                       "avaliacao": i[6],
+                       "datahora": i[7],
+                       "combinac": i[8],
+                       "combinag": i[9],
+                       "grupo": i[10],
+                       "grupoc": i[11],
+                       "qtd": i[14],
+                       "valor": i[15],
+                       "nomeproduto": i[16]
+                       } for i in itens],
             "mesa": comanda[2],
             "pagamento": comanda[6],
             "status": comanda[3],
@@ -50,6 +86,8 @@ def get_comandas(sid):
     sio.emit('comandas', comandas_dict, room=sid)
 
 # define evento para obter dados das mesas
+
+
 @sio.on('get_mesas')
 def get_mesas(sid):
     # executa query no banco de dados para obter as mesas
@@ -69,14 +107,17 @@ def get_mesas(sid):
     sio.emit('mesas', mesas_dict, room=sid)
 
 # função para atualizar os dados em intervalos regulares
+
+
 def update_data():
     while True:
         # atualiza os dados das comandas e mesas
         get_comandas(None)
         get_mesas(None)
-        
+
         # aguarda 5 segundos antes de atualizar novamente
         eventlet.sleep(5)
+
 
 # inicia a atualização dos dados em um novo thread
 eventlet.spawn(update_data)

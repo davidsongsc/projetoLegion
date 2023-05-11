@@ -375,8 +375,8 @@ def register_user(request):
 
 
 def api(request):
-    titulo = 'Demas & Divas'
-    texto = 'Area restrita!'
+    titulo = 'Legion'
+    texto = 'Sistema & Controle'
     return render(request, 'api.html', {'titulo': titulo,
                                         'texto': texto,
                                         })

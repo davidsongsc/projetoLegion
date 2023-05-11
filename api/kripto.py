@@ -179,13 +179,25 @@ def criptografaTexto(textos):
         return texto_criptografado.decode()
 
 
+def test():
+    "Teste para key 9992, resultado esperado 00000000999."
+    
+    key = 9992
+    subkey = '00000000'
+
+    print('Modulo Gerador Numero Key:')
+    print(Programa().engrenagemTeste(subkey+str(key)))
+    print(desengrenagem(Programa().engrenagemTeste(subkey+str(key))))
+
+
 if __name__ == '__main__':
     import sys
-    # Para o gerador funcionar no console.
-    # deve ser digitado: código usuario cpf
-    # Exemplo;
-    # ---      passe diogo 12345678910
-
+    """
+    Teste para : 21983108439
+    Texto original: 21983108439
+    Texto criptografado: b'gAAAAABkTfQPXrRJ9mjy-1NPQYJ19llitxL0r227B_FOFF7dWHOVFJROQlEfUZB2CVEE2uLsjwHh0F9XMJzVF7Jl9V32apaCPw=='
+    Texto descriptografado: 21983108439
+    """
     if sys.argv[1] == 'd-usuario-senha':
         print('Teste para:', sys.argv[2], sys.argv[3])
         if len(sys.argv) != 3:
@@ -205,3 +217,7 @@ if __name__ == '__main__':
         if len(sys.argv) == 3:
             criptografaTexto(sys.argv[2])
             sys.exit(1)
+
+    elif sys.argv[1] == 'test':
+        print('Teste geral :')
+        test()
