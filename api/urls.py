@@ -4,7 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
 urlpatterns = [
-    path('', views.api, name='index'),
+    path('', views.api, name='portifolio'),
+    path('index', views.index, name='index'),
     path('home', views.api, name='index'),
     path('login', views.login_view, name='login'),
     path('logout', views.logout_view, name='index'),

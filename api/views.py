@@ -21,6 +21,7 @@ from django.shortcuts import render
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.http import HttpResponse
+from django.shortcuts import redirect
 
 
 @csrf_exempt
@@ -375,6 +376,16 @@ def register_user(request):
 
 
 def api(request):
+    titulo = 'Legion'
+    texto = 'Sistema & Controle'
+    # Substitua 'outra_pagina' pela URL da página para redirecionar
+    return redirect('/portifolio')
+    # return render(request, 'api.html', {'titulo': titulo,
+    #                                    'texto': texto,
+    #                                    })
+
+
+def index(request):
     titulo = 'Legion'
     texto = 'Sistema & Controle'
     return render(request, 'api.html', {'titulo': titulo,

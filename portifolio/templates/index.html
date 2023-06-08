@@ -128,11 +128,14 @@
 
         .imagem-nome {
             background: cadetblue;
+            background-image: linear-gradient(45deg, cadetblue, rgb(126, 167, 168));
             padding: 30px;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
-            background-image: url('https://pbs.twimg.com/profile_banners/94169196/1637350689/1500x500');
+            /* background-image: url('https://pbs.twimg.com/profile_banners/94169196/1637350689/1500x500');*/
             background-size: cover;
+            background-size: auto 232px;
+            background-repeat: no-repeat;
         }
 
         .perfil-cont {
@@ -146,12 +149,14 @@
 
         .imagem-perfil-cont {
             border-radius: 50%;
+            box-shadow: 1px 1px 6px;
         }
 
         .nome-perfil-cont {
             font-family: serif;
             font-weight: 100;
             font-size: 41px;
+            text-shadow: 1px 1px 1px;
             padding: 10px;
         }
 
@@ -160,10 +165,67 @@
             font-family: sans-serif;
             letter-spacing: 2px;
         }
-        .obj-projetos{
-            height: 125px;
+
+        .obj-projetos {
+            height: 45vh;
+            width: 45%;
+            box-shadow: 1px 1px 10px black;
         }
 
+        h2 {
+            background: aliceblue;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 1px 1px 4px;
+
+        }
+
+        h2:hover {
+            opacity: 0.2;
+        }
+
+        .mane-ra {
+            margin: 15px 0;
+            background-color: whitesmoke;
+            border-radius: 25px;
+            padding: 15px;
+            width: 25%;
+            box-shadow: 1px 1px 4px;
+
+        }
+
+        .mane-ra:hover {
+            opacity: 0.7;
+        }
+
+        p {
+            color: brown;
+            font-weight: 500;
+            font-family: monospace;
+            font-size: 27px;
+        }
+
+        a {
+            color: black;
+            font-weight: 900;
+            font-family: emoji;
+            font-size: 22px;
+            letter-spacing: 1.5px;
+            text-decoration: underline rebeccapurple;
+        }
+
+        @media screen and (max-width: 1399px) {
+            .obj-projetos {
+                width: 44%;
+                height: 24vh;
+            }
+        }
+
+        @media screen and (max-width: 1168px) {
+            .obj-projetos {
+                width: 37%;
+            }
+        }
     </style>
 </head>
 
@@ -189,7 +251,7 @@
                     <div class="contato-cont">
                         <p>E-mail: <a href="mailto:davidsongsc@gmail.com">davidsongsc@gmail.com</a></p>
                         <p>Telefone: <a href="tel:+5521983108439">+55 21 98310-8439</a></p>
-                        <p>WhatsApp: <a href="https://wa.me/5521983108439">+55 21 98310-8439</a></p>
+                        <p>WhatsApp: <a href="https://wa.me/5521983108439">wa.me/5521983108439</a></p>
                         <p>Linkedin: <a href="https://www.linkedin.com/in/davidsongsc/">in/Davidsongsc</a></p>
                         <p>Twitter: <a href="https://twitter.com/Dagesico">Dagesico</a></p>
 
@@ -205,51 +267,154 @@
 
         </section>
 
-
+        <h1>Projetos</h1>
         <section style="display: flex;
         flex-wrap: wrap;
         flex-direction: row;
         justify-content: space-around;">
-            <aside class="obj-projetos">
+
+            <aside class="obj-projetos"
+                style="background-image: url('/static/img/site_img.png'); background-size: cover;">
                 <h2>projeto SiteDelivery</h2>
-                <p>React</p>
-                <a href="https://main--marvelous-gaufre-f1183b.netlify.app/">Pagina do Projeto</a>
+                <div class="mane-ra">
+                    <p>React</p>
+                    <a href="https://main--marvelous-gaufre-f1183b.netlify.app/">Pagina</a>
+                    <a href="https://github.com/davidsongsc/projetoJugger">GitHub</a>
+                </div>
             </aside>
-            <aside>
+            <aside class="obj-projetos"
+                style="background-image: url('/static/img/comanda_img.png'); background-size: cover;">
                 <h2>projeto ComandaDelivery</h2>
-                <p>React</p>
-                <a href="https://main--marvelous-gaufre-f1183b.netlify.app/">Pagina do Projeto</a>
+                <div class="mane-ra">
+                    <p>React</p>
+                    <a href="https://main--marvelous-gaufre-f1183b.netlify.app/">Pagina</a>
+                    <a href="https://github.com/davidsongsc/projetoMirana">GitHub</a>
+                </div>
+
             </aside>
-            <aside>
-                <h2>Projeto CozinhaDelivery</h2>
-                <p>React</p>
-                <a href="https://main--marvelous-gaufre-f1183b.netlify.app/">Pagina do Projeto</a>
+            <aside class="obj-projetos"
+                style="background-image: url('/static/img/game_img.png'); background-size: cover;">
+                <h2>Jogo Cria Estrategy</h2>
+                <div class="mane-ra">
+                    <p>React</p>
+                    <a href="">Pagina</a>
+                    <a href="https://github.com/davidsongsc/BatalhaElemental">GitHub</a>
+                </div>
             </aside>
-            <aside>
+            <aside class="obj-projetos"
+                style="background-image: url('/static/img/servidor_img.png'); background-size: cover;">
                 <h2>Projeto ServidorDelivery</h2>
-                <p>Django - Socket.io</p>
-                <a href="https://dagesico.pythonanywhere.com/">Pagina do Projeto</a>
+                <div class="mane-ra">
+                    <p>Django - Socket.io</p>
+                    <a href="https://dagesico.pythonanywhere.com/">Pagina</a>
+                    <a href="https://github.com/davidsongsc/projetoLegion">GitHub</a>
+                </div>
 
             </aside>
-
+            <aside class="obj-projetos">
+                <h2>Projeto CozinhaDelivery</h2>
+                <div class="mane-ra">
+                    <p>React</p>
+                    <a href="https://main--marvelous-gaufre-f1183b.netlify.app/">Pagina</a>
+                </div>
+            </aside>
         </section>
+        <h1>Carteira de Trabalho</h1>
         <section style="display: flex;
         flex-wrap: wrap;
         flex-direction: row;
         justify-content: space-around;">
+
             <aside>
                 <h2>Emprego atual</h2>
-                <p>Outback Steakhouse - Bartender - jan/2019 - atual</p>
+                <p>Empresa: OUTBACK STEAKHOUSE RESTAURANTES BRASIL S.A. </p>
+                <p>Cargo: Bartender</p>
+                <p>Periodo: jan/2019 - atual</p>
+                <p>Descrição: </p>
             </aside>
             <aside>
-                <h2>---</h2>
-                <p>Espetto Carioca - Garçom - jan/2019 - atual</p>
+                <h2>Garçom</h2>
+                <p>Empresa: MJ BARRETOS COMERCIO DE ALIMENTOS EIRELI </p>
+                <p>Periodo: dez/2018</p>
+                <p>Descrição: </p>
             </aside>
             <aside>
-                <h2>---</h2>
-                <p>Demas & Divas - Garçom - jan/2019 - atual</p>
+                <h2>Garçom</h2>
+                <p>Empresa: BAR E BOTEQUIM ESPETTO VALQUEIRE LTDA </p>
+                <p>Periodo: jun/2018 - out/2018</p>
+                <p>Descrição: </p>
+            </aside>
+            <aside>
+                <h2>Garçom</h2>
+                <p>Empresa: DEMAS E DIVAS MADUREIRA RESTAURANTE LTDA </p>
+                <p>Periodo: 16/02/2016 - 01/11/2017</p>
+                <p>Descrição: </p>
             </aside>
         </section>
+        <h1>Serviços, Freelance, outros...</h1>
+        <section style="display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: space-around;">
+
+            <aside>
+                <h2>-----</h2>
+                <p>Empresa: DEMAS E DIVAS VALQUERIE </p>
+                <p>Cargo: Apoio</p>
+                <p>Periodo: 17/07/2015 - 15/10/2016</p>
+                <p>Descrição: </p>
+            </aside>
+            <aside>
+                <h2>-----</h2>
+                <p>Empresa: DEMAS E DIVAS RECREIO </p>
+                <p>Cargo: Apoio</p>
+                <p>Periodo: 05/05/2014 - 15/10/2015</p>
+                <p>Descrição: </p>
+            </aside>
+            <aside>
+                <h2>-----</h2>
+                <p>Empresa: ORHUS LOGISTICA </p>
+                <p>Cargo: Assistente administrativo</p>
+                <p>Periodo: out/2013 - fev/2014</p>
+                <p>Descrição: </p>
+            </aside>
+            <aside>
+                <h2>-----</h2>
+                <p>Empresa: ORHUS LOGISTICA </p>
+                <p>Cargo: Assistente administrativo</p>
+                <p>Periodo: abr/2013 - out/2014</p>
+                <p>Descrição: </p>
+            </aside>
+            <aside>
+                <h2>-----</h2>
+                <p>Empresa: Exercito Brasileiro </p>
+                <p>Cargo: Radio Operador / Informatica</p>
+                <p>Periodo: nov/2011 - fev/2013</p>
+                <p>Descrição: </p>
+            </aside>
+            <aside>
+                <h2>-----</h2>
+                <p>Empresa: Exercito Brasileiro </p>
+                <p>Cargo: Radio Operador / Almoxarifado</p>
+                <p>Periodo: dez/2011 - nov/2011</p>
+                <p>Descrição: </p>
+            </aside>
+            <aside>
+                <h2>-----</h2>
+                <p>Empresa: Exercito Brasileiro </p>
+                <p>Cargo: Radio Operador / Almoxarifado</p>
+                <p>Periodo: ago/2010 - nov/2011</p>
+                <p>Descrição: </p>
+            </aside>
+            <aside>
+                <h2>-----</h2>
+                <p>Empresa: Exercito Brasileiro </p>
+                <p>Cargo: Soldado</p>
+                <p>Periodo: mar/2010 - ago/2010</p>
+                <p>Descrição: </p>
+            </aside>
+        </section>
+
 
     </main>
 </body>
