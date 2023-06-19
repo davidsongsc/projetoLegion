@@ -27,6 +27,7 @@ class Comanda(models.Model):
     itens = models.IntegerField(blank=True, null=True)
     pagamento = models.IntegerField(blank=True, null=True)
     operador = models.TextField(blank=True, null=True)  # This field type is a guess.
+    gorjeta = models.FloatField(blank=False, null=False)  # This field type is a guess.
 
     class Meta:
         managed = False

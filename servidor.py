@@ -1,6 +1,7 @@
 import eventlet
 import socketio
 import sqlite3
+from datetime import datetime
 
 def run_api():
     sio = socketio.Server(cors_allowed_origins=['http://192.168.0.50:3000'])
@@ -15,12 +16,13 @@ def run_api():
         # e fazer o que desejar com eles (por exemplo, autenticar o usuário)
 
         # Exemplo de autenticação com dados de usuário armazenados no banco de dados:
-        cursor.execute("SELECT operador FROM Comanda WHERE mesa = ?", (data[0],))
+        cursor.execute(
+            "SELECT operador FROM Comanda WHERE mesa = ?", (data[0],))
         operador = cursor.fetchone()
 
         if operador:
             sio.emit('autenticacao', {'success': True,
-                    'operador': operador[0], }, room=sid)
+                                      'operador': operador[0], }, room=sid)
         else:
             sio.emit('autenticacao', {'success': False}, room=sid)
 
@@ -36,7 +38,7 @@ def run_api():
 
         if colaborador:
             sio.emit('autenticacao', {
-                    'success': True, 'nivel': colaborador[2], 'usuario': colaborador[5], 'auth': colaborador[3], }, room=sid)
+                'success': True, 'nivel': colaborador[2], 'usuario': colaborador[5], 'auth': colaborador[3], }, room=sid)
         else:
             sio.emit('autenticacao', {'success': False}, room=sid)
 
@@ -52,7 +54,7 @@ def run_api():
             cursor.execute("SELECT * FROM Itens WHERE id = ?", (comanda[0],))
             itens = cursor.fetchall()
             comanda_dict = {
-                "chave": comanda[1],
+                "chave": comanda[2],
                 "datahora": comanda[4],
                 "id": comanda[0],
                 "itens": [
@@ -102,32 +104,83 @@ def run_api():
 
         sio.emit('mesas', mesas_dict, room=sid)
 
-    
     @sio.on('modificar_status_comanda')
     def modificar_status_comanda(sid, data):
         # Obter o ID da comanda e o novo status do objeto de dados recebido
         comanda_id = data['id']
         novo_status = data['status']
-
+        data_hora = datetime.now() # Ano, mês, dia, hora, minuto, segundo      
         # Atualizar o status da comanda no banco de dados
-        cursor.execute("UPDATE Comanda SET status = ? WHERE chave = ?", (novo_status, comanda_id))
+        cursor.execute(
+            "UPDATE Comanda SET status = ?, udatahora = ? WHERE chave = ?", (novo_status, data_hora, comanda_id))
         conn.commit()
 
         # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
-        sio.emit('status_comanda_modificado', {'id': comanda_id, 'status': novo_status}, room=sid)
+        sio.emit('status_comanda_modificado', {
+                 'id': comanda_id, 'status': novo_status}, room=sid)
 
+    @sio.on('modificar_status_comanda_nova')
+    def modificar_status_comanda_nova(sid, data):
+        print('Modificar Comanda:')
+        # Obter o ID da comanda e o novo status do objeto de dados recebido
+        comanda_id = data['id']
+        novo_status = int(data['status'])
+        atendente = data['atendente']
+        data_hora = datetime.now() # Ano, mês, dia, hora, minuto, segundo        
+        # Inserir uma nova linha na tabela Comanda com o ID e o status fornecidos
+        cursor.execute(
+            "INSERT INTO Comanda (chave, mesa, status, datahora, itens, operador, gorjeta) VALUES (?, ?, ?, ?, ?, ?, ?)", (comanda_id, comanda_id, novo_status, data_hora, comanda_id, atendente, 0.10))
+        conn.commit()
+
+        # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
+        sio.emit('status_comanda_modificado', {
+            'id': comanda_id, 'status': novo_status}, room=sid)
+        
+    @sio.on('modificar_gorjeta_comanda')
+    def modificar_gorjeta_comanda(sid, data):
+        # Obter o ID da comanda e o novo status do objeto de dados recebido
+        comanda_id = data['id']
+        gorjeta = data['gorjeta']
+        data_hora = datetime.now() # Ano, mês, dia, hora, minuto, segundo      
+        # Atualizar o status da comanda no banco de dados
+        cursor.execute(
+            "UPDATE Comanda SET gorjeta = ?, udatahora = ? WHERE chave = ?", (gorjeta, data_hora, comanda_id))
+        conn.commit()
+
+        # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
+        sio.emit('status_comanda_modificado', {
+                 'id': comanda_id, 'gorjeta': gorjeta}, room=sid)
+        
+    @sio.on('deletar_status_comanda_nova')
+    def deletar_status_comanda_nova(sid, data):
+        print('Deletar Comanda')
+        comanda_id = data['id']
+        novo_status = 0
+        data_hora = datetime.now() # Ano, mês, dia, hora, minuto, segundo      
+        # Atualizar o status da comanda no banco de dados
+        cursor.execute(
+            "UPDATE Comanda SET status = ?, udatahora = ? WHERE chave = ?", (novo_status, data_hora, comanda_id))
+        conn.commit()
+
+        # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
+        sio.emit('status_comanda_modificado', {
+                 'id': comanda_id, 'status': novo_status}, room=sid)
+                 
     def update_data():
         while True:
             # atualiza os dados das comandas e mesas
             get_comandas(None)
-            get_mesas(None)
+          
+          
             # aguarda 5 segundos antes de atualizar no  vamente
-            eventlet.sleep(5)
+            print('ok')
+            eventlet.sleep(1.5)
 
     # inicia a atualização dos dados em um novo thread
     eventlet.spawn(update_data)
 
     if __name__ == '__main__':
         eventlet.wsgi.server(eventlet.listen(('', 8000)), app)
+
 
 run_api()
