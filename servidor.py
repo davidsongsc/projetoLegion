@@ -3,6 +3,7 @@ import socketio
 import sqlite3
 from datetime import datetime
 
+
 def run_api():
     sio = socketio.Server(cors_allowed_origins=['http://192.168.0.50:3000'])
     app = socketio.WSGIApp(sio)
@@ -25,6 +26,101 @@ def run_api():
                                       'operador': operador[0], }, room=sid)
         else:
             sio.emit('autenticacao', {'success': False}, room=sid)
+
+    @sio.on('consultar_relatorios')
+    def consultar_relatorios(sid):
+        # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
+        # e fazer o que desejar com eles (por exemplo, buscar os relatórios no banco de dados)
+
+        # Exemplo de consulta de relatórios no banco de dados:
+        cursor.execute("SELECT * FROM Relatorios")
+        relatorios = cursor.fetchall()
+
+        # Formatando os dados dos relatórios antes de enviar ao cliente
+        formatted_relatorios = []
+        for relatorio in relatorios:
+            formatted_relatorios.append({
+                'id': relatorio[0],
+                'tipo_relatorio': relatorio[1],
+                'tipo_ocorrencia': relatorio[2],
+                'ocorrencia': relatorio[3],
+                'texto': relatorio[4],
+                'data_hora': relatorio[5],
+                'responsavel': relatorio[6],
+                'valor': relatorio[7]
+            })
+
+        # Emitir os dados dos relatórios para o cliente
+        sio.emit('relatorios_encontrados', {
+                 'relatorios': formatted_relatorios}, room=sid)
+
+    @sio.on('consultar_venda')
+    def consultar_relatorios(sid):
+        # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
+        # e fazer o que desejar com eles (por exemplo, buscar os relatórios no banco de dados)
+
+        # Exemplo de consulta de relatórios no banco de dados:
+        cursor.execute("SELECT * FROM Itens")
+        relatorios = cursor.fetchall()
+
+        # Formatando os dados dos relatórios antes de enviar ao cliente
+        formatted_relatorios = []
+        for relatorio in relatorios:
+            formatted_relatorios.append({
+                'id': relatorio[0],
+                'comanda': relatorio[1],
+                'produto': relatorio[2],
+                'datahora': relatorio[7],
+                'qtd': relatorio[14],
+                'valor': relatorio[15],
+                'status': relatorio[17],
+                'operador': relatorio[18]
+            })
+
+        # Emitir os dados dos relatórios para o cliente
+        sio.emit('vendas_encontrados', {
+                 'venda': formatted_relatorios}, room=sid)
+
+    @sio.on('inserir_pagamentos')
+    def modificar_status_comanda_nova(sid, data):
+        print('Registro Pagamento:')
+        # Obter o ID da comanda e o novo status do objeto de dados recebido
+        bandeira = data['id']
+        valor = float(data['status'])
+        comanda = int(data['status'])
+        data_hora = datetime.now()  # Ano, mês, dia, hora, minuto, segundo
+        # Inserir uma nova linha na tabela Comanda com o ID e o status fornecidos
+        cursor.execute(
+            "INSERT INTO Pagamento (bandeira, valor, comanda, datahora) VALUES (?, ?, ?, ?)", (bandeira, valor, comanda, data_hora))
+        conn.commit()
+
+        # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
+        sio.emit('pagamentos_inseridos', {
+            'status': 'ok'}, room=sid)
+
+    @sio.on('consultar_pagamentos')
+    def consultar_relatorios(sid):
+        # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
+        # e fazer o que desejar com eles (por exemplo, buscar os relatórios no banco de dados)
+
+        # Exemplo de consulta de relatórios no banco de dados:
+        cursor.execute("SELECT * FROM Pagamentos")
+        pagamentos = cursor.fetchall()
+
+        # Formatando os dados dos relatórios antes de enviar ao cliente
+        formatted_pagamentos = []
+        for relatorio in pagamentos:
+            formatted_pagamentos.append({
+                'id': relatorio[0],
+                'bandeira': relatorio[1],
+                'valor': relatorio[2],
+                'comanda': relatorio[3],
+                'datahora': relatorio[4]
+            })
+
+        # Emitir os dados dos relatórios para o cliente
+        sio.emit('pagamentos_encontrados', {
+                 'pagamentos': formatted_pagamentos}, room=sid)
 
     @sio.on('dados_usuario')
     def dados_usuario(sid, data):
@@ -109,7 +205,7 @@ def run_api():
         # Obter o ID da comanda e o novo status do objeto de dados recebido
         comanda_id = data['id']
         novo_status = data['status']
-        data_hora = datetime.now() # Ano, mês, dia, hora, minuto, segundo      
+        data_hora = datetime.now()  # Ano, mês, dia, hora, minuto, segundo
         # Atualizar o status da comanda no banco de dados
         cursor.execute(
             "UPDATE Comanda SET status = ?, udatahora = ? WHERE chave = ?", (novo_status, data_hora, comanda_id))
@@ -126,7 +222,7 @@ def run_api():
         comanda_id = data['id']
         novo_status = int(data['status'])
         atendente = data['atendente']
-        data_hora = datetime.now() # Ano, mês, dia, hora, minuto, segundo        
+        data_hora = datetime.now()  # Ano, mês, dia, hora, minuto, segundo
         # Inserir uma nova linha na tabela Comanda com o ID e o status fornecidos
         cursor.execute(
             "INSERT INTO Comanda (chave, mesa, status, datahora, itens, operador, gorjeta) VALUES (?, ?, ?, ?, ?, ?, ?)", (comanda_id, comanda_id, novo_status, data_hora, comanda_id, atendente, 0.10))
@@ -135,13 +231,43 @@ def run_api():
         # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
         sio.emit('status_comanda_modificado', {
             'id': comanda_id, 'status': novo_status}, room=sid)
-        
+
+    @sio.on('anotar_item_comanda')
+    def modificar_item_comanda(sid, data, id, operador):
+        print('Modificar Itens:')
+        for item in data:
+            item_id = id
+            nome_produto = item['id']
+            nome_fantasia = item['nomefantasia']
+            valor = item['valor']
+            descricao = item['descricao']
+            avaliacao = item['avaliacao']
+            disponibilidade = item['disponibilidade']
+            quantidade = item['qtd']
+            grupo = item['grupo']
+            grupo_c = item['grupoc']
+            combina_g = item['combinag']
+            combina_c = item['combinac']
+
+            # Executar a instrução de INSERT para inserir o item na tabela "itens"
+            if item['status']:
+
+                cursor.execute("""
+                    INSERT INTO itens (itens, produto, gorjeta, desconto, tipoproduto, avaliacao, datahora, combinac, combinag, descricao, disponibilidade, grupo, grupoc, qtd, valor, nomefantasia, Operador)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (item_id, nome_produto, 0, 0, '', avaliacao, datetime.now(), combina_c, combina_g, descricao, disponibilidade, grupo, grupo_c, quantidade, valor, nome_fantasia, operador))
+                conn.commit()
+
+        # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
+        sio.emit('status_comanda_modificado', {
+            'id': item_id, 'status': 3}, room=sid)
+
     @sio.on('modificar_gorjeta_comanda')
     def modificar_gorjeta_comanda(sid, data):
         # Obter o ID da comanda e o novo status do objeto de dados recebido
         comanda_id = data['id']
         gorjeta = data['gorjeta']
-        data_hora = datetime.now() # Ano, mês, dia, hora, minuto, segundo      
+        data_hora = datetime.now()  # Ano, mês, dia, hora, minuto, segundo
         # Atualizar o status da comanda no banco de dados
         cursor.execute(
             "UPDATE Comanda SET gorjeta = ?, udatahora = ? WHERE chave = ?", (gorjeta, data_hora, comanda_id))
@@ -150,31 +276,49 @@ def run_api():
         # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
         sio.emit('status_comanda_modificado', {
                  'id': comanda_id, 'gorjeta': gorjeta}, room=sid)
-        
+
     @sio.on('deletar_status_comanda_nova')
     def deletar_status_comanda_nova(sid, data):
         print('Deletar Comanda')
         comanda_id = data['id']
         novo_status = 0
-        data_hora = datetime.now() # Ano, mês, dia, hora, minuto, segundo      
-        # Atualizar o status da comanda no banco de dados
-        cursor.execute(
-            "UPDATE Comanda SET status = ?, udatahora = ? WHERE chave = ?", (novo_status, data_hora, comanda_id))
+        data_hora = datetime.now()  # Ano, mês, dia, hora, minuto, segundo
+
+        cursor.execute("DELETE FROM Comanda WHERE chave = ?", (comanda_id,))
         conn.commit()
 
+        cursor.execute("DELETE FROM Itens WHERE itens = ?", (comanda_id,))
+        conn.commit()
+
+        # Defina o tipo de relatório para cancelamento (por exemplo, 1)
+        tipo_relatorio = 1
+        # Defina o tipo de ocorrência para cancelamento (por exemplo, 1)
+        tipo_ocorrencia = 1
+        # Descrição da ocorrência de cancelamento
+        ocorrencia = 'Cancelamento de comanda'
+        # Informações adicionais do cancelamento
+        texto = 'Comanda cancelada: {}'.format(comanda_id)
+        responsavel = data['atendente']
+        valor = data['valor']
+
+        cursor.execute(
+            "INSERT INTO Relatorios (tipo_relatorio, tipo_ocorrencia, ocorrencia, texto, datahora, responsavel, valor) VALUES (?, ?, ?, ?,?, ?, ?)",
+            (tipo_relatorio, tipo_ocorrencia, ocorrencia,
+             texto, data_hora, responsavel, valor)
+        )
+        conn.commit()
         # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
         sio.emit('status_comanda_modificado', {
                  'id': comanda_id, 'status': novo_status}, room=sid)
-                 
+
     def update_data():
         while True:
             # atualiza os dados das comandas e mesas
             get_comandas(None)
-          
-          
+
             # aguarda 5 segundos antes de atualizar no  vamente
-            print('ok')
-            eventlet.sleep(1.5)
+
+            eventlet.sleep(1)
 
     # inicia a atualização dos dados em um novo thread
     eventlet.spawn(update_data)
