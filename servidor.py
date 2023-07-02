@@ -232,9 +232,43 @@ def run_api():
         sio.emit('status_comanda_modificado', {
             'id': comanda_id, 'status': novo_status}, room=sid)
 
+    @sio.on('deletar_item_comanda')
+    def deletar_item_comanda(sid, item_id):
+        print('Deletar Item:', item_id)
+        data_hora = datetime.now()  # Ano, mês, dia, hora, minuto, segundo
+             # Defina o tipo de relatório para cancelamento (por exemplo, 1)
+        tipo_relatorio = 1
+        # Defina o tipo de ocorrência para cancelamento (por exemplo, 1)
+        tipo_ocorrencia = 1
+        # Descrição da ocorrência de cancelamento
+        ocorrencia = 'Remover desconto'
+        # Informações adicionais do cancelamento
+        texto = 'item removido: {}'.format(item_id['nomesis'])
+        responsavel = item_id['atendente']
+        valor = item_id['valor']
+
+        cursor.execute("DELETE FROM itens WHERE itens = ? AND produto = ?",
+                       (item_id['comanda'], item_id['produto']))
+        conn.commit()
+
+        # Executar a instrução de DELETE para remover o item da comanda
+        cursor.execute(
+            "INSERT INTO Relatorios (tipo_relatorio, tipo_ocorrencia, ocorrencia, texto, datahora, responsavel, valor) VALUES (?, ?, ?, ?,?, ?, ?)",
+            (tipo_relatorio, tipo_ocorrencia, ocorrencia,
+             texto, data_hora, responsavel, valor)
+        )
+        conn.commit()
+
+
+        
+        
+        # Emitir o evento para informar ao cliente React que o item foi deletado com sucesso
+        sio.emit('item_comanda_deletado', {
+            'comanda': item_id['comanda'], 'produto': item_id['produto']}, room=sid)
+
     @sio.on('anotar_item_comanda')
     def modificar_item_comanda(sid, data, id, operador):
-        print('Modificar Itens:')
+        print(f'Modificar Itens: {data} {id} {operador}')
         for item in data:
             item_id = id
             nome_produto = item['id']
@@ -250,7 +284,7 @@ def run_api():
             combina_c = item['combinac']
 
             # Executar a instrução de INSERT para inserir o item na tabela "itens"
-            if item['status']:
+            if item['status'] == 1:
 
                 cursor.execute("""
                     INSERT INTO itens (itens, produto, gorjeta, desconto, tipoproduto, avaliacao, datahora, combinac, combinag, descricao, disponibilidade, grupo, grupoc, qtd, valor, nomefantasia, Operador)
