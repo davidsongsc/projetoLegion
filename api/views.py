@@ -354,7 +354,7 @@ def logout_view(request):
 
 @api_view(['POST'])
 def register_user(request):
-    username = request.data.get('username')
+    username = request.data.get('usuario')
     password = request.data.get('password')
     email = request.data.get('email')
 

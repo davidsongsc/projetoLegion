@@ -5,7 +5,9 @@ from datetime import datetime
 
 
 def run_api():
-    sio = socketio.Server(cors_allowed_origins=['http://192.168.0.50:3000'])
+    sio = socketio.Server(cors_allowed_origins=['http://192.168.0.50:3000',
+                                                'http://192.168.0.50:3001',
+                                                'http://192.168.0.50:3002'])
     app = socketio.WSGIApp(sio)
 
     conn = sqlite3.connect('demas.sqlite3')
@@ -236,7 +238,7 @@ def run_api():
     def deletar_item_comanda(sid, item_id):
         print('Deletar Item:', item_id)
         data_hora = datetime.now()  # Ano, mês, dia, hora, minuto, segundo
-             # Defina o tipo de relatório para cancelamento (por exemplo, 1)
+        # Defina o tipo de relatório para cancelamento (por exemplo, 1)
         tipo_relatorio = 1
         # Defina o tipo de ocorrência para cancelamento (por exemplo, 1)
         tipo_ocorrencia = 1
@@ -259,9 +261,6 @@ def run_api():
         )
         conn.commit()
 
-
-        
-        
         # Emitir o evento para informar ao cliente React que o item foi deletado com sucesso
         sio.emit('item_comanda_deletado', {
             'comanda': item_id['comanda'], 'produto': item_id['produto']}, room=sid)
