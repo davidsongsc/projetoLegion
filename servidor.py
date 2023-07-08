@@ -176,7 +176,9 @@ def run_api():
                 "mesa": comanda[2],
                 "pagamento": comanda[6],
                 "status": comanda[3],
-                "atendente": comanda[7]
+                "atendente": comanda[7],
+                "operacao": comanda[10]
+                
             }
             comandas_dict.append(comanda_dict)
 
@@ -207,10 +209,11 @@ def run_api():
         # Obter o ID da comanda e o novo status do objeto de dados recebido
         comanda_id = data['id']
         novo_status = data['status']
+        operacao = data['operacao']
         data_hora = datetime.now()  # Ano, mês, dia, hora, minuto, segundo
         # Atualizar o status da comanda no banco de dados
         cursor.execute(
-            "UPDATE Comanda SET status = ?, udatahora = ? WHERE chave = ?", (novo_status, data_hora, comanda_id))
+            "UPDATE Comanda SET status = ?, udatahora = ?, operacao = ? WHERE chave = ?", (novo_status, data_hora, operacao, comanda_id))
         conn.commit()
 
         # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso

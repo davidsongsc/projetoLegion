@@ -113,6 +113,7 @@ class AuthUser(models.Model):
     date_joined = models.DateTimeField()
     first_name = models.CharField(max_length=150)
     token = models.CharField(max_length=16)
+    pedido = models.IntegerField()
 
     class Meta:
         managed = False
