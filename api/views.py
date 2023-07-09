@@ -308,7 +308,7 @@ def user_view(request):
     # Se o nome for válido e o token for válido, prosseguir com a lógica do endpoint
     usuario = AuthUser.objects.filter(username=nome)
     data = list(usuario.values())
-    return Response({'nome': data[0]['first_name'], 'sobrenome': data[0]['last_name'], 'colaborador': data[0]['is_staff'], 'email': data[0]['email'], 'pedido': data[0]['pedido']})
+    return Response({'id': data[0]['id'],'nome': data[0]['first_name'], 'sobrenome': data[0]['last_name'], 'colaborador': data[0]['is_staff'], 'email': data[0]['email'], 'pedido': data[0]['pedido']})
 
 # Login Administrativo API
 
@@ -341,7 +341,7 @@ def login_view(request):
             usuario = AuthUser.objects.filter(
             username=request.data.get('username'))
             data = list(usuario.values())
-            return Response({'message': 'Login realizado com sucesso!', 'pedido': data[0]['pedido'], 'usuario': username,  'access_token': str(token)}, status=status.HTTP_200_OK)
+            return Response({'message': 'Login realizado com sucesso!',  'id': data[0]['id'], 'pedido': data[0]['pedido'], 'usuario': username,  'access_token': str(token)}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'Usuário ou senha inválidos.'}, status=status.HTTP_401_UNAUTHORIZED)
     else:

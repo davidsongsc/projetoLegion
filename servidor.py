@@ -177,7 +177,8 @@ def run_api():
                 "pagamento": comanda[6],
                 "status": comanda[3],
                 "atendente": comanda[7],
-                "operacao": comanda[10]
+                "operacao": comanda[10],
+                "cliente": comanda[11]
                 
             }
             comandas_dict.append(comanda_dict)
@@ -227,10 +228,14 @@ def run_api():
         comanda_id = data['id']
         novo_status = int(data['status'])
         atendente = data['atendente']
+        operacao = data['operacao']
+        cliente = None
+        if data['cliente']:
+            cliente = data['cliente']
         data_hora = datetime.now()  # Ano, mês, dia, hora, minuto, segundo
         # Inserir uma nova linha na tabela Comanda com o ID e o status fornecidos
         cursor.execute(
-            "INSERT INTO Comanda (chave, mesa, status, datahora, itens, operador, gorjeta) VALUES (?, ?, ?, ?, ?, ?, ?)", (comanda_id, comanda_id, novo_status, data_hora, comanda_id, atendente, 0.10))
+            "INSERT INTO Comanda (chave, mesa, status, datahora, itens, operador, gorjeta, operacao, cliente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (comanda_id, comanda_id, novo_status, data_hora, comanda_id, atendente, 0.10, operacao, cliente))
         conn.commit()
 
         # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
