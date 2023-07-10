@@ -5,9 +5,11 @@ from datetime import datetime
 
 
 def run_api():
-    sio = socketio.Server(cors_allowed_origins=['http://192.168.0.50:3000',
+    sio = socketio.Server(cors_allowed_origins=['https://main--marvelous-gaufre-f1183b.netlify.app',
+                                                'https://main--idyllic-gumption-1a6de8.netlify.app',
+                                                'http://192.168.0.50:3000',
                                                 'http://192.168.0.50:3001',
-                                                'http://192.168.0.50:3002'])
+                                                'http://192.168.0.50:30012'])
     app = socketio.WSGIApp(sio)
 
     conn = sqlite3.connect('demas.sqlite3')
@@ -365,7 +367,7 @@ def run_api():
     eventlet.spawn(update_data)
 
     if __name__ == '__main__':
-        eventlet.wsgi.server(eventlet.listen(('', 8000)), app)
+        eventlet.wsgi.server(eventlet.listen(('', 8010)), app)
 
 
 run_api()

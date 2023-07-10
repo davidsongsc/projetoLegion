@@ -61,6 +61,8 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
 }
 CORS_ALLOWED_ORIGINS = [
+    'https://main--marvelous-gaufre-f1183b.netlify.app',
+    'https://main--idyllic-gumption-1a6de8.netlify.app',
     'http://192.168.0.50:3000',  # ou outra origem que você esteja usando
     'http://192.168.0.50:3001',
     'http://192.168.0.50:3002',
@@ -99,7 +101,11 @@ CHANNEL_LAYERS = {
 }
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = ['http://192.168.0.50:3000']
+CORS_ORIGIN_WHITELIST = ['http://192.168.0.50:3000',
+                         'http://192.168.0.50:3001',
+                         'http://192.168.0.50:3002',
+                         'https://main--idyllic-gumption-1a6de8.netlify.app',
+                         'https://main--marvelous-gaufre-f1183b.netlify.app']
 
 ROOT_URLCONF = 'servidord.urls'
 CORS_ALLOW_CREDENTIALS = True
