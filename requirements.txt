@@ -1,9 +1,17 @@
+django== 4.2.3
+django-cors-headers==4.2.0
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
+djangorestframework-simplejwt
+cryptography==41.0.2
+tornado==6.3.2
 dnspython==1.16.0
 enum-compat==0.0.3
 eventlet==0.25.2
-greenlet==0.4.16
 monotonic==1.5
-python-engineio
-python-socketio
+python-engineio==4.3.1
+python-socketio==4.1.0
 pytz==2020.1
 six==1.15.0
+greenlet==2.0.0rc4
+channels==4.0.0
