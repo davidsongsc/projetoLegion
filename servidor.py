@@ -1,20 +1,8 @@
-import eventlet
-import socketio
-import sqlite3
 from datetime import datetime
-
+from modelo.sqlite_dados import cursor, conn
+from modelo.socket_dados import sio, app, eventlet
 
 def run_api():
-    sio = socketio.Server(cors_allowed_origins=['https://main--marvelous-gaufre-f1183b.netlify.app',
-                                                'https://main--idyllic-gumption-1a6de8.netlify.app',
-                                                'http://192.168.0.50:3000',
-                                                'http://192.168.0.50:3001',
-                                                'http://192.168.0.50:30012'])
-    app = socketio.WSGIApp(sio)
-
-    conn = sqlite3.connect('demas.sqlite3')
-    cursor = conn.cursor()
-
     @sio.on('dados_comanda')
     def dados_comanda(sid, data):
         # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
@@ -27,7 +15,7 @@ def run_api():
 
         if operador:
             sio.emit('autenticacao', {'success': True,
-                                      'operador': operador[0], }, room=sid)
+                                        'operador': operador[0], }, room=sid)
         else:
             sio.emit('autenticacao', {'success': False}, room=sid)
 
@@ -277,7 +265,7 @@ def run_api():
 
     @sio.on('anotar_item_comanda')
     def modificar_item_comanda(sid, data, id, operador):
-        print(f'Modificar Itens: {data} {id} {operador}')
+        
         for item in data:
             item_id = id
             nome_produto = item['id']
@@ -300,10 +288,10 @@ def run_api():
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (item_id, nome_produto, 0, 0, '', avaliacao, datetime.now(), combina_c, combina_g, descricao, disponibilidade, grupo, grupo_c, quantidade, valor, nome_fantasia, operador))
                 conn.commit()
-
+        print(f'Modificar Itens: {data} {id} {operador}')
         # Emitir o evento para informar ao cliente React que o status foi modificado com sucesso
         sio.emit('status_comanda_modificado', {
-            'id': item_id, 'status': 3}, room=sid)
+            'id': id, 'status': 3}, room=sid)
 
     @sio.on('modificar_gorjeta_comanda')
     def modificar_gorjeta_comanda(sid, data):
