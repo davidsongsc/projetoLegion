@@ -11,7 +11,7 @@ Desenvolvimento de projeto python para servir como api as aplicações front end
 
 <a href="https://python.org/" target="_blank">
     <img
-      src="[https://cdn.freebiesupply.com/logos/large/2x/python-3-logo-png-transparent.png](https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/267_Python-512.png)"
+      src="https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/267_Python-512.png"
       alt="Python"
       width="120"
       height="120"
