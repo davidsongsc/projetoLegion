@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Produtos, Grupos, AuthUser, Comanda, Itens, Inventario, Colaborador
+from .models import Produtos, Grupos, AuthUser, Comanda,Usuario, Itens, Inventario, Colaborador, ConsoleData
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import AccessToken
@@ -22,6 +22,8 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.http import HttpResponse
 from django.shortcuts import redirect
+from django.db import connections
+
 
 
 @csrf_exempt
@@ -93,6 +95,116 @@ TOKEN = secrets.token_hex(16)
 TOKEN = "abc123"
 
 
+
+def todosRoteiros(request):
+    data = {
+        'console_data': list(ConsoleData.objects.using('console_data_db').all().values()),
+    }
+    return JsonResponse(data, safe=False)
+
+def pesquisarRoteiro(request, roteiro_id):
+    # Define o banco de dados apropriado para a consulta
+    using_db = 'console_data_db'  # Substitua pelo nome correto do banco de dados
+    with connections[using_db].cursor() as cursor:
+        try:
+            cursor.execute("SELECT * FROM console_data WHERE id = %s", [roteiro_id])
+            row = cursor.fetchone()
+
+            if row:
+                roteiro_id, codigo, datahora, nivel, projeto = row
+                response_data = {
+                    'id': roteiro_id,
+                    'codigo': codigo,
+                    'datahora': datahora,
+                    'nivel': nivel,
+                    'projeto': projeto,
+                    # Outras propriedades que você deseja incluir na resposta
+                }
+                return JsonResponse(response_data)
+            else:
+                return JsonResponse({'error': 'Roteiro not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def criar_usuario(request):
+    print(request.method)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            
+            # Define o banco de dados apropriado para salvar o novo usuário
+            using_db = 'console_data_db'  # Substitua pelo nome correto do banco de dados
+            with connections[using_db].cursor() as cursor:
+                cursor.execute(
+                    "INSERT INTO usuario (usuario, telefone, pergunta_secreta, resposta_secreta, email) "
+                    "VALUES (%s, %s, %s, %s, %s)",
+                    [
+                        data.get('usuario'),
+                        data.get('telefone'),
+                        data.get('pergunta_secreta'),
+                        data.get('resposta_secreta'),
+                        data.get('email')
+                    ]
+                )
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def salvar_roteiro(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            roteiro_id = data.get('id')
+            codigo = data.get('codigo')
+
+            # Define o banco de dados apropriado para a consulta
+            using_db = 'console_data_db'  # Substitua pelo nome correto do banco de dados
+            with connections[using_db].cursor() as cursor:
+                try:
+                    cursor.execute("UPDATE console_data SET codigo = %s WHERE id = %s", [codigo, roteiro_id])
+                    # Ou use outro método de atualização apropriado com base no seu modelo
+                    return JsonResponse({'success': True})
+                except Exception as e:
+                    return JsonResponse({'error': str(e)}, status=500)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def user_login(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            telefone = str(data.get('telefone'))
+
+            # Especifique o banco de dados apropriado
+            using_db = 'console_data_db'
+            with connections[using_db].cursor() as cursor:
+                cursor.execute(
+                    "SELECT * FROM usuario WHERE usuario = %s AND telefone = %s",
+                    [username, telefone]
+                )
+                row = cursor.fetchone()
+
+            if row:
+                user = row[0]  # O primeiro campo é o ID do usuário
+                login(request, user)
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'error': 'Invalid credentials'}, status=401)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+    
 def listar_produtos(request):
     print(TOKEN)
     nome = request.GET.get('nome', '')

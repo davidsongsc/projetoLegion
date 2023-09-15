@@ -136,8 +136,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'demas.sqlite3',
-    }
+    },
+    'console_data_db': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'console_db.db',
+    },
+    'network': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'social_network.db',
+    },
 }
+
 
 
 # Password validation

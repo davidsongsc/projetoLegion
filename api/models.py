@@ -13,7 +13,8 @@ class Produtos(models.Model):
     grupoc = models.IntegerField(blank=True, null=True)
     combinag = models.IntegerField(blank=True, null=True)
     combinac = models.IntegerField(blank=True, null=True)
-
+    def __str__(self) -> str:
+        return self.nomeproduto
     class Meta:
         managed = False
         db_table = 'produtos'
@@ -118,6 +119,8 @@ class AuthUser(models.Model):
     class Meta:
         managed = False
         db_table = 'auth_user'
+    def __str__(self) -> str:
+        return self.username
 
 class Colaborador(models.Model):
     usuario = models.ForeignKey(get_user_model(), models.DO_NOTHING, db_column='usuario', blank=True, null=True)
@@ -128,3 +131,39 @@ class Colaborador(models.Model):
     class Meta:
         managed = False
         db_table = 'Colaborador'
+    def __str__(self) -> str:
+        return self.usuario
+
+
+class ConsoleData(models.Model):
+    id = models.AutoField(primary_key=True)
+    codigo = models.TextField()
+    datahora = models.DateTimeField()
+    nivel = models.TextField()
+    projeto = models.TextField()
+
+    class Meta:
+        db_table = 'console_data'  # Nome da tabela no banco de dados 'console_data'
+
+    def __str__(self):
+        return f'{self.id} - {self.codigo}'
+    
+
+
+class Usuario(models.Model):
+    id = models.AutoField(primary_key=True)
+    usuario = models.CharField(max_length=255)
+    telefone = models.CharField(max_length=20)
+    pergunta_secreta = models.CharField(max_length=255)
+    resposta_secreta = models.CharField(max_length=255)
+    email = models.EmailField()
+    datahora = models.DateTimeField(auto_now_add=True)
+    staff = models.IntegerField()
+    member = models.IntegerField()
+    adm = models.IntegerField()
+
+    class Meta:
+        db_table = 'usuario'
+    
+    def __str__(self):
+        return f'{self.usuario} - {self.telefone}'

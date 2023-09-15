@@ -18,8 +18,8 @@ def start_estoque():
     os.system("python estoque.py")
 
 def start_terminais():
-    print('terminais: 1.00.00')
-    os.system("python terminais.py")
+    print('roteiros: 1.00.00')
+    os.system("python roteiro__.py")
 
 def start_cozinha():
     print('cozinha: 1.00.00')
