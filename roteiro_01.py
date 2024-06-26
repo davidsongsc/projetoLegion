@@ -7,11 +7,11 @@ import sqlite3
 PORTA = 8011 # Porta servidor roteiro
 HOST_PRODUCAO = ['https://main--marvelous-gaufre-f1183b.netlify.app',
                                             'https://main--idyllic-gumption-1a6de8.netlify.app',
-                                            'http://192.168.0.50:3000',
-                                            'http://192.168.0.50:3001',
-                                            'http://192.168.0.50:30012']
+                                            'http://192.168.1.50:3000',
+                                            'http://192.168.1.50:3001',
+                                            'http://192.168.1.50:30012']
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="http://192.168.0.50:3000")
+socketio = SocketIO(app, cors_allowed_origins="http://192.168.1.50:3000")
 limiter = Limiter(app, default_limits=["1 per second"])  # Configuração do Limiter
 
 # Função para criar a tabela no banco de dados

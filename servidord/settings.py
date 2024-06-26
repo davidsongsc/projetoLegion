@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-g^7ekpv-u6_jv$m%qewhl-8mk!gv9p9n-ow#@h=!3c###-_h(+
 DEBUG = True
 
 ALLOWED_HOSTS = ['dagesico.pythonanywhere.com',
-                  '192.168.0.50']
+                  '192.168.0.50',
+                  '192.168.1.50']
 
 
 # Application definition
@@ -63,10 +64,10 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     'https://main--marvelous-gaufre-f1183b.netlify.app',
     'https://main--idyllic-gumption-1a6de8.netlify.app',
-    'http://192.168.0.50:3000',  # ou outra origem que você esteja usando
-    'http://192.168.0.50:3001',
-    'http://192.168.0.50:3002',
-    'http://192.168.0.50:3003',
+    'http://192.168.1.50:3000',  # ou outra origem que você esteja usando
+    'http://192.168.1.50:3001',
+    'http://192.168.1.50:3002',
+    'http://192.168.1.50:3003',
 ]
 
 # Configuração do socket.io

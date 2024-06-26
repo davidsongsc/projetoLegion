@@ -1,14 +1,17 @@
+from flask import Flask
+from flask_socketio import SocketIO
+from flask_cors import CORS
 from datetime import datetime
 from modelo.sqlite_dados import cursor, conn
 from modelo.socket_dados import sio, app, eventlet
 
+app = Flask(__name__)
+sio = SocketIO(app, cors_allowed_origins="*")  # Permitir todas as origens
+CORS(app)
+
 def run_api():
     @sio.on('dados_comanda')
     def dados_comanda(sid, data):
-        # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
-        # e fazer o que desejar com eles (por exemplo, autenticar o usuário)
-
-        # Exemplo de autenticação com dados de usuário armazenados no banco de dados:
         cursor.execute(
             "SELECT operador FROM Comanda WHERE mesa = ?", (data[0],))
         operador = cursor.fetchone()
@@ -21,10 +24,6 @@ def run_api():
 
     @sio.on('consultar_relatorios')
     def consultar_relatorios(sid):
-        # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
-        # e fazer o que desejar com eles (por exemplo, buscar os relatórios no banco de dados)
-
-        # Exemplo de consulta de relatórios no banco de dados:
         cursor.execute("SELECT * FROM Relatorios")
         relatorios = cursor.fetchall()
 
@@ -47,11 +46,7 @@ def run_api():
                  'relatorios': formatted_relatorios}, room=sid)
 
     @sio.on('consultar_venda')
-    def consultar_relatorios(sid):
-        # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
-        # e fazer o que desejar com eles (por exemplo, buscar os relatórios no banco de dados)
-
-        # Exemplo de consulta de relatórios no banco de dados:
+    def consultar_vendas(sid):
         cursor.execute("SELECT * FROM Itens")
         relatorios = cursor.fetchall()
 
@@ -91,11 +86,7 @@ def run_api():
             'status': 'ok'}, room=sid)
 
     @sio.on('consultar_pagamentos')
-    def consultar_relatorios(sid):
-        # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
-        # e fazer o que desejar com eles (por exemplo, buscar os relatórios no banco de dados)
-
-        # Exemplo de consulta de relatórios no banco de dados:
+    def consultar_pagamentos(sid):
         cursor.execute("SELECT * FROM Pagamentos")
         pagamentos = cursor.fetchall()
 
@@ -114,20 +105,20 @@ def run_api():
         sio.emit('pagamentos_encontrados', {
                  'pagamentos': formatted_pagamentos}, room=sid)
 
-    @sio.on('dados_usuario')
+    @sio.on('usuariodlogin')
     def dados_usuario(sid, data):
-        # Aqui você pode acessar os dados enviados pelo cliente na variável `data`
-        # e fazer o que desejar com eles (por exemplo, autenticar o usuário)
+        try:
+            cursor.execute(
+                "SELECT Colaborador.*, auth_user.username FROM Colaborador JOIN auth_user ON Colaborador.usuario = auth_user.id WHERE Colaborador.senha = ?", (data['senha'],))
+            colaborador = cursor.fetchone()
 
-        # Exemplo de autenticação com dados de usuário armazenados no banco de dados:
-        cursor.execute(
-            "SELECT Colaborador.*, auth_user.username FROM Colaborador JOIN auth_user ON Colaborador.usuario = auth_user.id WHERE Colaborador.senha = ?", (data['senha'],))
-        colaborador = cursor.fetchone()
-
-        if colaborador:
-            sio.emit('autenticacao', {
-                'success': True, 'nivel': colaborador[2], 'usuario': colaborador[5], 'auth': colaborador[3], }, room=sid)
-        else:
+            if colaborador:
+                sio.emit('autenticacao', {
+                    'success': True, 'nivel': colaborador[2], 'usuario': colaborador[5], 'auth': colaborador[3], }, room=sid)
+            else:
+                sio.emit('autenticacao', {'success': False}, room=sid)
+        except Exception as e:
+            print("Erro durante a consulta ao banco de dados:", e)
             sio.emit('autenticacao', {'success': False}, room=sid)
 
     # define evento para obter dados das comandas
@@ -349,7 +340,7 @@ def run_api():
 
             # aguarda 5 segundos antes de atualizar no  vamente
 
-            eventlet.sleep(1)
+            eventlet.sleep(0)
 
     # inicia a atualização dos dados em um novo thread
     eventlet.spawn(update_data)

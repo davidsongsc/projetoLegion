@@ -7,7 +7,7 @@ def start_servidor():
 
 def start_manage():
     print('delivery: 1.00.00')
-    os.system("python manage.py runserver 192.168.0.50:5000")
+    os.system("python manage.py runserver 192.168.1.50:5000")
 
 def start_impressoras():
     print('impressora: 1.00.00')
@@ -19,7 +19,7 @@ def start_estoque():
 
 def start_terminais():
     print('roteiros: 1.00.00')
-    os.system("python roteiro__.py")
+    #os.system("python roteiro__.py")
 
 def start_cozinha():
     print('cozinha: 1.00.00')
