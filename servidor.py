@@ -4,7 +4,7 @@ from flask_cors import CORS
 from datetime import datetime
 from modelo.sqlite_dados import cursor, conn
 from modelo.socket_dados import sio, app, eventlet
-
+from terlog import terminal_log
 app = Flask(__name__)
 sio = SocketIO(app, cors_allowed_origins="*")  # Permitir todas as origens
 CORS(app)
@@ -108,17 +108,21 @@ def run_api():
     @sio.on('usuariodlogin')
     def dados_usuario(sid, data):
         try:
+           
             cursor.execute(
                 "SELECT Colaborador.*, auth_user.username FROM Colaborador JOIN auth_user ON Colaborador.usuario = auth_user.id WHERE Colaborador.senha = ?", (data['senha'],))
             colaborador = cursor.fetchone()
 
             if colaborador:
+                terminal_log(colaborador, 'usuario')
+                print(f"'nivel': {colaborador[2]}, 'usuario': {colaborador[6]}, 'auth': {colaborador[3]}, 'restricoes': {colaborador[5]}'")
                 sio.emit('autenticacao', {
-                    'success': True, 'nivel': colaborador[2], 'usuario': colaborador[5], 'auth': colaborador[3], }, room=sid)
+                    'success': True, 'nivel': colaborador[2], 'usuario': colaborador[6], 'auth': colaborador[3], 'restricoes': colaborador[5] }, room=sid)
             else:
                 sio.emit('autenticacao', {'success': False}, room=sid)
         except Exception as e:
             print("Erro durante a consulta ao banco de dados:", e)
+            
             sio.emit('autenticacao', {'success': False}, room=sid)
 
     # define evento para obter dados das comandas
@@ -340,7 +344,7 @@ def run_api():
 
             # aguarda 5 segundos antes de atualizar no  vamente
 
-            eventlet.sleep(0)
+            eventlet.sleep(1)
 
     # inicia a atualização dos dados em um novo thread
     eventlet.spawn(update_data)
