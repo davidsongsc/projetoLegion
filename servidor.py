@@ -5,11 +5,22 @@ from datetime import datetime
 from modelo.sqlite_dados import cursor, conn
 from modelo.socket_dados import sio, app, eventlet
 from terlog import terminal_log
+from OpenSSL import SSL
+
 app = Flask(__name__)
 sio = SocketIO(app, cors_allowed_origins="*")  # Permitir todas as origens
+CERT_FILE = 'certs/cert.pem'
+KEY_FILE = 'certs/key.pem'
+
 CORS(app)
+context = SSL.Context(SSL.SSLv23_METHOD)
+context.use_privatekey_file(KEY_FILE)
+context.use_certificate_file(CERT_FILE)
+LISTA_NOTIFICACAO = []
+
 
 def run_api():
+
     @sio.on('dados_comanda')
     def dados_comanda(sid, data):
         cursor.execute(
@@ -18,7 +29,7 @@ def run_api():
 
         if operador:
             sio.emit('autenticacao', {'success': True,
-                                        'operador': operador[0], }, room=sid)
+                                      'operador': operador[0], }, room=sid)
         else:
             sio.emit('autenticacao', {'success': False}, room=sid)
 
@@ -108,21 +119,22 @@ def run_api():
     @sio.on('usuariodlogin')
     def dados_usuario(sid, data):
         try:
-           
+
             cursor.execute(
                 "SELECT Colaborador.*, auth_user.username FROM Colaborador JOIN auth_user ON Colaborador.usuario = auth_user.id WHERE Colaborador.senha = ?", (data['senha'],))
             colaborador = cursor.fetchone()
 
             if colaborador:
                 terminal_log(colaborador, 'usuario')
-                print(f"'nivel': {colaborador[2]}, 'usuario': {colaborador[6]}, 'auth': {colaborador[3]}, 'restricoes': {colaborador[5]}'")
+                print(
+                    f"'nivel': {colaborador[2]}, 'usuario': {colaborador[6]}, 'auth': {colaborador[3]}, 'restricoes': {colaborador[5]}'")
                 sio.emit('autenticacao', {
-                    'success': True, 'nivel': colaborador[2], 'usuario': colaborador[6], 'auth': colaborador[3], 'restricoes': colaborador[5] }, room=sid)
+                    'success': True, 'nivel': colaborador[2], 'usuario': colaborador[6], 'auth': colaborador[3], 'restricoes': colaborador[5]}, room=sid)
             else:
                 sio.emit('autenticacao', {'success': False}, room=sid)
         except Exception as e:
             print("Erro durante a consulta ao banco de dados:", e)
-            
+
             sio.emit('autenticacao', {'success': False}, room=sid)
 
     # define evento para obter dados das comandas
@@ -164,7 +176,7 @@ def run_api():
                 "atendente": comanda[7],
                 "operacao": comanda[10],
                 "cliente": comanda[11]
-                
+
             }
             comandas_dict.append(comanda_dict)
 
@@ -260,7 +272,7 @@ def run_api():
 
     @sio.on('anotar_item_comanda')
     def modificar_item_comanda(sid, data, id, operador):
-        
+
         for item in data:
             item_id = id
             nome_produto = item['id']
@@ -337,20 +349,27 @@ def run_api():
         sio.emit('status_comanda_modificado', {
                  'id': comanda_id, 'status': novo_status}, room=sid)
 
+    @sio.on('notificacoes')
+    def notificacoes(sid, data):
+        print('Notificações')
+        print(data)
+
+        sio.emit('notificacoes_rec', data, room=sid)
+
     def update_data():
         while True:
             # atualiza os dados das comandas e mesas
             get_comandas(None)
-
             # aguarda 5 segundos antes de atualizar no  vamente
 
-            eventlet.sleep(1)
+            eventlet.sleep(0.5)
 
     # inicia a atualização dos dados em um novo thread
     eventlet.spawn(update_data)
 
     if __name__ == '__main__':
-        eventlet.wsgi.server(eventlet.listen(('', 8010)), app)
+        eventlet.wsgi.server(eventlet.wrap_ssl(eventlet.listen(
+            ('', 8010)), certfile=CERT_FILE, keyfile=KEY_FILE, server_side=True), app)
 
 
 run_api()

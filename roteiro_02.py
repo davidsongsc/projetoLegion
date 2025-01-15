@@ -8,12 +8,12 @@ import socketio
 from datetime import datetime, timedelta
 import pytz  # Pacote para gerenciar fusos horários
 
-PORTA = 8010 # Porta servidor post
-HOST_PRODUCAO = ['https://main--marvelous-gaufre-f1183b.netlify.app',
-                                            'https://main--idyllic-gumption-1a6de8.netlify.app',
-                                            'http://192.168.1.50:3000',
-                                            'http://192.168.1.50:3001',
-                                            'http://192.168.1.50:30012']
+PORTA = 8010  # Porta servidor post
+HOST_PRODUCAO = [
+    'https://main--idyllic-gumption-1a6de8.netlify.app',
+    'http://192.168.1.50:3000',
+    'http://192.168.1.50:3001',
+    'http://192.168.1.50:30012']
 
 sio = socketio.Server(cors_allowed_origins=HOST_PRODUCAO)
 app = socketio.WSGIApp(sio)
@@ -23,6 +23,8 @@ socketio = SocketIO(app, cors_allowed_origins="http://192.168.1.50:3000")
 connected_clients = []  # Lista para armazenar as conexões WebSocket
 
 # Função para enviar todos os posts para os clientes conectados
+
+
 def emit_recent_posts_within_time(posts_list, sid, time_window_minutes=3):
     try:
         conn = sqlite3.connect('social_network.db')
@@ -32,7 +34,8 @@ def emit_recent_posts_within_time(posts_list, sid, time_window_minutes=3):
         three_minutes_ago = datetime.now() - timedelta(minutes=time_window_minutes)
 
         # Seleciona os posts criados nos últimos 3 minutos
-        cursor.execute('SELECT * FROM posts WHERE timestamp >= ? ORDER BY timestamp DESC', (three_minutes_ago,))
+        cursor.execute(
+            'SELECT * FROM posts WHERE timestamp >= ? ORDER BY timestamp DESC', (three_minutes_ago,))
         recent_posts = cursor.fetchall()
 
         conn.close()
@@ -51,14 +54,16 @@ def emit_recent_posts_within_time(posts_list, sid, time_window_minutes=3):
                  'conteudo': jsonify(posts_list)}, room=sid)
     except Exception as e:
         print('Error fetching recent posts:', e)
-    
+
+
 @sio.on('criar_post')
 def create_post(sid, data):
     print('===='*25)
     conn = sqlite3.connect('social_network.db')
     cursor = conn.cursor()
 
-    timestamp = datetime.now(pytz.timezone('America/Sao_Paulo'))  # Obtém a data/hora atual no fuso horário do Brasil (UTC-3)
+    # Obtém a data/hora atual no fuso horário do Brasil (UTC-3)
+    timestamp = datetime.now(pytz.timezone('America/Sao_Paulo'))
 
     cursor.execute('''
         INSERT INTO posts (user, content, timestamp, key_user_reference)
@@ -66,17 +71,20 @@ def create_post(sid, data):
     ''', (data['user'], data['content'], timestamp, data['user']))
 
     # Atualizar a contagem de postagens do usuário
-    cursor.execute('UPDATE users SET posts = posts + 1 WHERE id = ?', (data['user'],))
+    cursor.execute(
+        'UPDATE users SET posts = posts + 1 WHERE id = ?', (data['user'],))
 
     conn.commit()
     conn.close()
-    
-    sio.emit('status', {"status": 'Verdadeiro', "post": data['content']}, room=sid)
+
+    sio.emit('status', {"status": 'Verdadeiro',
+             "post": data['content']}, room=sid)
+
 
 @sio.on('deletarPost')
-def delete_post(sid ,data):
-    print('===='*4 +'DELETAR POST' + '===='*4)
-    
+def delete_post(sid, data):
+    print('===='*4 + 'DELETAR POST' + '===='*4)
+
     try:
         conn = sqlite3.connect('social_network.db')
         cursor = conn.cursor()
@@ -96,6 +104,7 @@ def delete_post(sid ,data):
 
     except Exception as e:
         print('Error deleting post:', e)
+
 
 @sio.on('post_todos')
 def get_all_posts(sid):
@@ -121,8 +130,6 @@ def get_all_posts(sid):
     sio.emit('todos', posts_list, room=sid)
 
 
-
-    
 # Rota para criar um novo usuário
 @sio.on('criar')
 def create_user():
@@ -146,6 +153,8 @@ def create_user():
         return jsonify({'error': 'Invalid data'}), 400
 
 # Rota para obter detalhes de um usuário pelo ID
+
+
 @sio.on('selecionar_usuario')
 def get_user(user_id):
     try:
@@ -175,6 +184,8 @@ def get_user(user_id):
         return jsonify({'error': str(e)}), 500
 
 # Rota para obter posts de um usuário
+
+
 @sio.on('selecionar_post_usuario')
 def get_user_posts(user_id):
     try:
@@ -203,13 +214,13 @@ def get_user_posts(user_id):
 
 
 def update_data():
-        while True:
-            # atualiza os dados das comandas e mesas
-            get_all_posts(None)
+    while True:
+        # atualiza os dados das comandas e mesas
+        get_all_posts(None)
 
-            # aguarda 5 segundos antes de atualizar no  vamente
+        # aguarda 5 segundos antes de atualizar no  vamente
 
-            eventlet.sleep(1)
+        eventlet.sleep(1)
 
     # inicia a atualização dos dados em um novo thread
 eventlet.spawn(update_data)
